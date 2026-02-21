@@ -1,3 +1,6 @@
+Video Link : https://drive.google.com/file/d/1gDpet3LgTLQA9BQ9NX3BZ3yYplEk7bXQ/view?usp=sharing
+
+
 # FleetFlow – Fleet & Logistics Management System
 
 A modular, enterprise-grade fleet management platform for Odoo 18 that replaces manual logbooks with a centralized, rule-based digital hub for complete fleet lifecycle management.
