@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import fleetflow_vehicle
-from . import fleetflow_driver
-from . import fleetflow_trip
-from . import fleetflow_maintenance
-from . import fleetflow_fuel
+from . import ff_vehicle
+from . import ff_driver
+from . import ff_trip
+from . import ff_maintenance
+from . import ff_fuel_expense

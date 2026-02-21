@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PAGE 6: EXPENSE & FUEL LOGGING
+         Wireframe:
+           Side form: New Expense (Trip ID, Driver, Fuel Cost, Misc Expense)
+           Main table: Trip ID | Driver | Distance | Fuel Expense |
+                       Date | Min. Expense | Done
+           Calculation: Total Operational Cost = Fuel + Maintenance per Vehicle
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- LIST VIEW — wireframe table columns -->
+    <record id="view_ff_fuel_expense_list" model="ir.ui.view">
+        <field name="name">ff.fuel.expense.list</field>
+        <field name="model">ff.fuel.expense</field>
+        <field name="arch" type="xml">
+            <list string="Trip Expense &amp; Fuel Logging" sample="1">
+                <!-- Wireframe columns: Trip ID | Driver | Distance | Fuel Expense | Date | Min. Expense | Done -->
+                <field name="trip_id" string="Trip ID"/>
+                <field name="driver_id" string="Driver"/>
+                <field name="distance_km" string="Distance (km)"/>
+                <field name="fuel_cost" string="Fuel Expense" widget="monetary"/>
+                <field name="date" string="Date"/>
+                <field name="misc_expense" string="Misc. Expense" widget="monetary"/>
+                <field name="cost" string="Total Cost" widget="monetary"/>
+                <!-- Extra useful columns -->
+                <field name="vehicle_id" string="Vehicle" optional="show"/>
+                <field name="expense_type" string="Type" optional="show"/>
+                <field name="liters" string="Liters" optional="show"/>
+                <field name="station" string="Station" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW — New Expense form matching wireframe -->
+    <record id="view_ff_fuel_expense_form" model="ir.ui.view">
+        <field name="name">ff.fuel.expense.form</field>
+        <field name="model">ff.fuel.expense</field>
+        <field name="arch" type="xml">
+            <form string="Fuel &amp; Expense Log">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- New Expense Form — matching wireframe: Trip ID, Driver, Fuel Cost, Misc Expense -->
+                    <group string="New Expense">
+                        <group>
+                            <field name="vehicle_id" string="Vehicle"
+                                   options="{'no_create': True}"/>
+                            <!-- Trip ID — wireframe label -->
+                            <field name="trip_id" string="Trip ID"
+                                   domain="[('vehicle_id','=',vehicle_id),('state','=','completed')]"
+                                   options="{'no_create': True}"/>
+                            <!-- Driver — wireframe label -->
+                            <field name="driver_id" string="Driver"
+                                   options="{'no_create': True}"/>
+                            <field name="date"/>
+                            <field name="expense_type" string="Type"/>
+                        </group>
+                        <group invisible="expense_type != 'fuel'">
+                            <!-- Fuel Cost — wireframe label -->
+                            <field name="liters" string="Liters Filled"/>
+                            <field name="cost_per_liter" string="Cost / Liter"/>
+                            <field name="fuel_cost" string="Fuel Cost" widget="monetary"/>
+                            <field name="distance_km" string="Distance (km)"/>
+                            <!-- Misc Expense — wireframe label -->
+                            <field name="misc_expense" string="Misc. Expense" widget="monetary"/>
+                            <field name="cost" string="Total Cost" widget="monetary" readonly="1"/>
+                        </group>
+                        <group invisible="expense_type == 'fuel'">
+                            <field name="cost" string="Amount" widget="monetary"/>
+                            <field name="station" string="Vendor"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Notes..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_ff_fuel_expense_search" model="ir.ui.view">
+        <field name="name">ff.fuel.expense.search</field>
+        <field name="model">ff.fuel.expense</field>
+        <field name="arch" type="xml">
+            <search string="Search Expenses">
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="trip_id"/>
+                <separator/>
+                <filter string="Fuel"           name="fuel"  domain="[('expense_type','=','fuel')]"/>
+                <filter string="Other Expenses" name="other" domain="[('expense_type','!=','fuel')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Vehicle" name="grp_vehicle" context="{'group_by':'vehicle_id'}"/>
+                    <filter string="Driver"  name="grp_driver"  context="{'group_by':'driver_id'}"/>
+                    <filter string="Type"    name="grp_type"    context="{'group_by':'expense_type'}"/>
+                    <filter string="Month"   name="grp_month"   context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_ff_fuel_expense" model="ir.actions.act_window">
+        <field name="name">Trip &amp; Expense Logging</field>
+        <field name="res_model">ff.fuel.expense</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ff_fuel_expense_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No expense logs yet!</p>
+            <p>Log fuel fills and operational expenses per trip to track Total Operational Cost.</p>
+        </field>
+    </record>
+
+</odoo>

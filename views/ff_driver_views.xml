@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PAGE 7: DRIVER PERFORMANCE & SAFETY PROFILES
+         Wireframe table: Name | License# | Expiry | Completion Rate |
+                          Safety Score | Complaints
+         Features: License expired → blocked from assignment
+                   Safety Score, Duty Status toggle
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- LIST VIEW — exact wireframe columns -->
+    <record id="view_ff_driver_list" model="ir.ui.view">
+        <field name="name">ff.driver.list</field>
+        <field name="model">ff.driver</field>
+        <field name="arch" type="xml">
+            <list string="Driver Performance &amp; Safety Profiles"
+                  decoration-danger="license_expired or state == 'suspended'"
+                  decoration-warning="not license_expired and days_to_expiry >= 0 and days_to_expiry &lt;= 30"
+                  decoration-success="state == 'available' and not license_expired"
+                  sample="1">
+                <!-- Wireframe columns: Name | License# | Expiry | Completion Rate | Safety Score | Complaints -->
+                <field name="name" string="Name"/>
+                <field name="license_number" string="License#"/>
+                <field name="license_expiry" string="Expiry"/>
+                <field name="trip_completion_rate" string="Completion Rate (%)" widget="float" digits="[16,0]"/>
+                <field name="safety_score" string="Safety Score" widget="float" digits="[16,0]"/>
+                <field name="complaints" string="Complaints"/>
+                <!-- Extra useful columns -->
+                <field name="license_category" string="Category" optional="show"/>
+                <field name="days_to_expiry" string="Days Left" optional="show"/>
+                <field name="state" widget="badge" string="Duty Status"
+                       decoration-success="state=='available'"
+                       decoration-info="state=='on_duty'"
+                       decoration-muted="state=='off_duty'"
+                       decoration-danger="state=='suspended'"/>
+                <!-- Quick action buttons -->
+                <button name="action_suspend" type="object"
+                        string="Suspend" class="btn-sm btn-danger"
+                        invisible="state == 'suspended'"
+                        confirm="Suspend this driver?"/>
+                <button name="action_reinstate" type="object"
+                        string="Reinstate" class="btn-sm btn-success"
+                        invisible="state != 'suspended'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW — Driver Profile with compliance banners -->
+    <record id="view_ff_driver_form" model="ir.ui.view">
+        <field name="name">ff.driver.form</field>
+        <field name="model">ff.driver</field>
+        <field name="arch" type="xml">
+            <form string="Driver Profile &amp; Safety">
+                <header>
+                    <button name="action_set_available" type="object"
+                            string="Set Available" class="btn-primary"
+                            invisible="state == 'available'"/>
+                    <button name="action_set_off_duty" type="object"
+                            string="Set Off Duty" class="btn-secondary"
+                            invisible="state in ('off_duty','suspended')"/>
+                    <button name="action_suspend" type="object"
+                            string="Suspend Driver" class="btn-danger"
+                            invisible="state == 'suspended'"
+                            confirm="Suspend this driver? They will be blocked from all trip assignments."/>
+                    <button name="action_reinstate" type="object"
+                            string="Reinstate Driver" class="btn-success"
+                            invisible="state != 'suspended'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="available,on_duty,off_duty,suspended"/>
+                </header>
+                <sheet>
+                    <!-- The "Safety Lock" — license expired banner -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="not license_expired">
+                        <strong><i class="fa fa-ban me-2"/>
+                            Safety Lock — License Expired!
+                        </strong>
+                        This driver cannot be assigned to any trip until their license is renewed.
+                        Days overdue: <field name="days_to_expiry" class="fw-bold" readonly="1"/>
+                    </div>
+                    <!-- Expiring soon warning -->
+                    <div class="alert alert-warning" role="alert"
+                         invisible="license_expired or days_to_expiry &gt; 30 or days_to_expiry &lt; 0">
+                        <strong><i class="fa fa-exclamation-triangle me-2"/>License Expiring Soon!</strong>
+                        <field name="days_to_expiry" readonly="1"/> days remaining — renew before expiry to avoid dispatch block.
+                    </div>
+                    <!-- Suspended banner -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="state != 'suspended'">
+                        <strong><i class="fa fa-user-slash me-2"/>Driver Suspended</strong>
+                        — blocked from all assignments until reinstated.
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Full Name"/></h1>
+                        <field name="employee_id" placeholder="Employee ID (optional)"/>
+                    </div>
+
+                    <group>
+                        <group string="Contact Info">
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                        <group string="License &amp; Compliance">
+                            <field name="license_number"/>
+                            <field name="license_category"/>
+                            <field name="license_expiry"/>
+                            <field name="license_expired" widget="boolean_toggle" readonly="1"/>
+                            <field name="days_to_expiry" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Performance & Safety Scores — matching wireframe columns -->
+                    <group string="Performance &amp; Safety" col="4">
+                        <field name="safety_score" string="Safety Score (/ 100)"/>
+                        <field name="trip_completion_rate" string="Completion Rate (%)" readonly="1"/>
+                        <field name="total_trips" readonly="1"/>
+                        <field name="completed_trips" readonly="1"/>
+                    </group>
+                    <group col="2">
+                        <field name="complaints" string="Reported Complaints"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Trip History" name="trips">
+                            <field name="trip_ids" readonly="1">
+                                <list decoration-success="state=='completed'"
+                                      decoration-danger="state=='cancelled'">
+                                    <field name="name"/>
+                                    <field name="vehicle_id"/>
+                                    <field name="origin"/>
+                                    <field name="destination"/>
+                                    <field name="scheduled_date"/>
+                                    <field name="cargo_weight" string="Cargo (kg)"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW — grouped by status -->
+    <record id="view_ff_driver_kanban" model="ir.ui.view">
+        <field name="name">ff.driver.kanban</field>
+        <field name="model">ff.driver</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false" sample="1">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="license_expired"/>
+                <field name="license_expiry"/>
+                <field name="safety_score"/>
+                <field name="trip_completion_rate"/>
+                <field name="days_to_expiry"/>
+                <field name="complaints"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <strong><field name="name"/></strong>
+                            <field name="state" widget="label_selection"
+                                   options="{'classes': {
+                                     'available':  'success',
+                                     'on_duty':    'info',
+                                     'off_duty':   'secondary',
+                                     'suspended':  'danger'
+                                   }}"/>
+                        </div>
+                        <!-- Expired license alert on card -->
+                        <div t-if="record.license_expired.raw_value"
+                             class="alert alert-danger py-1 px-2 mt-1 mb-1 small">
+                            <i class="fa fa-ban me-1"/> License EXPIRED
+                        </div>
+                        <ul class="list-unstyled small mt-2 mb-0">
+                            <li>🪪 <field name="license_expiry"/></li>
+                            <li>🛡 Safety Score: <strong><field name="safety_score"/>%</strong></li>
+                            <li>✅ Completion: <strong><field name="trip_completion_rate" digits="[16,0]"/>%</strong></li>
+                            <li>⚠ Complaints: <field name="complaints"/></li>
+                        </ul>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_ff_driver_search" model="ir.ui.view">
+        <field name="name">ff.driver.search</field>
+        <field name="model">ff.driver</field>
+        <field name="arch" type="xml">
+            <search string="Search Drivers">
+                <field name="name"/>
+                <field name="license_number"/>
+                <separator/>
+                <filter string="Available"       name="available"  domain="[('state','=','available')]"/>
+                <filter string="On Duty"         name="on_duty"    domain="[('state','=','on_duty')]"/>
+                <filter string="Off Duty"        name="off_duty"   domain="[('state','=','off_duty')]"/>
+                <filter string="Suspended"       name="suspended"  domain="[('state','=','suspended')]"/>
+                <separator/>
+                <filter string="License Expired" name="expired"    domain="[('license_expired','=',True)]"/>
+                <filter string="Expiring in 30d" name="expiring"   domain="[('days_to_expiry','&gt;=',0),('days_to_expiry','&lt;=',30)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Duty Status"      name="grp_state" context="{'group_by':'state'}"/>
+                    <filter string="License Category" name="grp_cat"   context="{'group_by':'license_category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_ff_driver" model="ir.actions.act_window">
+        <field name="name">Driver Performance &amp; Safety</field>
+        <field name="res_model">ff.driver</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_ff_driver_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first driver!</p>
+            <p>Manage driver compliance, license validity, and safety performance.</p>
+        </field>
+    </record>
+
+</odoo>

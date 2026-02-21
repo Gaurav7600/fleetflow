@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         COMMAND CENTER DASHBOARD — FleetFlow 18.0
+         Blueprint: KPI tiles + search/filter + trip table
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Client Action (OWL Dashboard) ─────────────────────────── -->
+    <record id="action_ff_dashboard_client" model="ir.actions.client">
+        <field name="name">Command Center</field>
+        <field name="tag">fleetflow_dashboard</field>
+    </record>
+
+    <!-- ── Shortcut actions for KPI tile drill-down ──────────────── -->
+    <record id="action_ff_active_fleet" model="ir.actions.act_window">
+        <field name="name">Active Fleet (On Trip)</field>
+        <field name="res_model">ff.vehicle</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state','=','on_trip')]</field>
+        <field name="context">{'search_default_on_trip': 1}</field>
+    </record>
+
+    <record id="action_ff_in_shop" model="ir.actions.act_window">
+        <field name="name">Maintenance Alerts (In Shop)</field>
+        <field name="res_model">ff.vehicle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','in_shop')]</field>
+    </record>
+
+    <record id="action_ff_pending_trips" model="ir.actions.act_window">
+        <field name="name">Pending Cargo (Draft Trips)</field>
+        <field name="res_model">ff.trip</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state','=','draft')]</field>
+    </record>
+
+    <record id="action_ff_expired_licenses" model="ir.actions.act_window">
+        <field name="name">License Compliance Alerts</field>
+        <field name="res_model">ff.driver</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('license_expired','=',True)]</field>
+    </record>
+
+    <record id="action_ff_expiring_licenses" model="ir.actions.act_window">
+        <field name="name">Licenses Expiring Soon (30 days)</field>
+        <field name="res_model">ff.driver</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('days_to_expiry','&gt;=',0),('days_to_expiry','&lt;=',30)]</field>
+    </record>
+
+    <!-- ── Fallback trip list view ────────────────────────────────── -->
+    <record id="view_ff_dashboard_trip_list" model="ir.ui.view">
+        <field name="name">ff.trip.dashboard.list</field>
+        <field name="model">ff.trip</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list string="Active Trips — Command Center"
+                  decoration-success="state == 'completed'"
+                  decoration-info="state == 'dispatched'"
+                  decoration-danger="state == 'cancelled'"
+                  create="1"
+                  sample="1">
+                <field name="name" string="Trip #"/>
+                <field name="vehicle_id" string="Vehicle"/>
+                <field name="fleet_type" string="Fleet Type"/>
+                <field name="driver_id" string="Driver"/>
+                <field name="origin" string="From" optional="show"/>
+                <field name="destination" string="To" optional="show"/>
+                <field name="cargo_weight" string="Cargo (kg)" optional="show"/>
+                <field name="scheduled_date" string="Scheduled" optional="show"/>
+                <field name="state" string="Status"
+                       widget="badge"
+                       decoration-info="state=='dispatched'"
+                       decoration-success="state=='completed'"
+                       decoration-danger="state=='cancelled'"/>
+                <button name="action_dispatch" type="object"
+                        string="Dispatch" class="btn-sm btn-primary"
+                        invisible="state != 'draft'"/>
+                <button name="action_complete" type="object"
+                        string="Complete" class="btn-sm btn-success"
+                        invisible="state != 'dispatched'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Legacy act_window (kept for backward compat) ──────────── -->
+    <record id="action_ff_dashboard" model="ir.actions.act_window">
+        <field name="name">Command Center (Trips)</field>
+        <field name="res_model">ff.trip</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_ids" eval="[(5,0,0),
+            (0,0,{'view_mode':'list','view_id':ref('view_ff_dashboard_trip_list')}),
+            (0,0,{'view_mode':'kanban'}),
+            (0,0,{'view_mode':'form'})]"/>
+        <field name="context">{'search_default_dispatched': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No active trips yet!</p>
+            <p>Create and dispatch trips to see them here.</p>
+        </field>
+    </record>
+
+</odoo>

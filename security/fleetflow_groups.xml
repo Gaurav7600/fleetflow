@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="module_category_fleetflow" model="ir.module.category">
+            <field name="name">FleetFlow</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Fleet Manager: Full access to all pages -->
+        <record id="group_ff_manager" model="res.groups">
+            <field name="name">Fleet Manager</field>
+            <field name="category_id" ref="module_category_fleetflow"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Full access: all 8 pages. Can retire vehicles, suspend drivers, view analytics.</field>
+        </record>
+
+        <!-- Dispatcher: Create/dispatch trips, read vehicles & drivers -->
+        <record id="group_ff_dispatcher" model="res.groups">
+            <field name="name">Dispatcher</field>
+            <field name="category_id" ref="module_category_fleetflow"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Create trips, select available vehicles/drivers. Read-only on registry.</field>
+        </record>
+
+        <!-- Safety Officer: Manage driver compliance & safety scores -->
+        <record id="group_ff_safety" model="res.groups">
+            <field name="name">Safety Officer</field>
+            <field name="category_id" ref="module_category_fleetflow"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Monitor driver compliance, license expiries, suspend/reinstate drivers.</field>
+        </record>
+
+        <!-- Financial Analyst: Read all, write expenses/fuel logs -->
+        <record id="group_ff_finance" model="res.groups">
+            <field name="name">Financial Analyst</field>
+            <field name="category_id" ref="module_category_fleetflow"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Audit fuel spend, maintenance ROI, analytics. Log expenses.</field>
+        </record>
+    </data>
+</odoo>

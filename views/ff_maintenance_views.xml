@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PAGE 5: MAINTENANCE & SERVICE LOGS
+         Wireframe:
+           Side form: New Service (Vehicle Name, Date/Service, Date) + Create/Cancel
+           Main table: Log ID | Vehicle | Date/Service | Date | Status
+           Auto-logic: Creating a log → Vehicle status = "In Shop"
+                       → Hidden from dispatcher pool
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- LIST VIEW — wireframe table: Log ID | Vehicle | Date/Service | Date | Status -->
+    <record id="view_ff_maintenance_list" model="ir.ui.view">
+        <field name="name">ff.maintenance.list</field>
+        <field name="model">ff.maintenance</field>
+        <field name="arch" type="xml">
+            <list string="Maintenance &amp; Service Logs"
+                  decoration-warning="state == 'open'"
+                  decoration-success="state == 'done'"
+                  sample="1">
+                <!-- Wireframe columns: Log ID | Vehicle | Date/Service | Date | Status -->
+                <field name="name" string="Log ID"/>
+                <field name="vehicle_id" string="Vehicle"/>
+                <field name="service_type" string="Date / Service"/>
+                <field name="service_date" string="Date"/>
+                <field name="completion_date" string="Release Date" optional="show"/>
+                <field name="vendor" string="Workshop" optional="show"/>
+                <field name="cost" widget="monetary" optional="show"/>
+                <field name="state" string="Status"
+                       widget="badge"
+                       decoration-warning="state=='open'"
+                       decoration-success="state=='done'"/>
+                <!-- Release button — matching wireframe workflow -->
+                <button name="action_complete_service" type="object"
+                        string="Release Vehicle" class="btn-sm btn-success"
+                        invisible="state == 'done'"
+                        confirm="Mark service complete and release vehicle to Available?"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW — New Service form matching wireframe side panel -->
+    <record id="view_ff_maintenance_form" model="ir.ui.view">
+        <field name="name">ff.maintenance.form</field>
+        <field name="model">ff.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Service Log">
+                <header>
+                    <button name="action_complete_service" type="object"
+                            string="Release Vehicle – Service Done" class="btn-success"
+                            invisible="state == 'done'"
+                            confirm="Mark this service complete? The vehicle will be set to Available."/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,done"/>
+                </header>
+                <sheet>
+                    <!-- In Shop auto-logic banner -->
+                    <div class="alert alert-warning" role="alert" invisible="state == 'done'">
+                        <i class="fa fa-wrench me-2"/>
+                        Vehicle <strong><field name="vehicle_id" readonly="1"/></strong>
+                        is <strong>In Shop</strong> — automatically hidden from the Trip Dispatcher.
+                    </div>
+                    <div class="alert alert-success" role="alert" invisible="state != 'done'">
+                        <i class="fa fa-check-circle me-2"/>
+                        Service complete. Vehicle has been released back to <strong>Available</strong>.
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- New Service Form — matches wireframe: Vehicle Name, Date/Service, Date -->
+                    <group string="New Service">
+                        <group>
+                            <field name="vehicle_id"
+                                   string="Vehicle Name"
+                                   readonly="state != 'open'"
+                                   options="{'no_create': True}"/>
+                            <field name="service_type"
+                                   string="Date / Service (Type)"
+                                   readonly="state != 'open'"/>
+                            <field name="service_date"
+                                   string="Date"
+                                   readonly="state != 'open'"/>
+                            <field name="completion_date" invisible="state != 'done'"/>
+                        </group>
+                        <group>
+                            <field name="vendor" string="Workshop / Vendor"/>
+                            <field name="cost" widget="monetary" string="Service Cost"/>
+                            <field name="odometer_at_service" string="Odometer at Service (km)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" string="Service Notes" placeholder="Describe the work done..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_ff_maintenance_search" model="ir.ui.view">
+        <field name="name">ff.maintenance.search</field>
+        <field name="model">ff.maintenance</field>
+        <field name="arch" type="xml">
+            <search string="Search Service Logs">
+                <field name="vehicle_id"/>
+                <field name="service_type"/>
+                <field name="vendor"/>
+                <separator/>
+                <filter string="In Shop (Open)"  name="open" domain="[('state','=','open')]"/>
+                <filter string="Completed"        name="done" domain="[('state','=','done')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Vehicle"      name="grp_vehicle" context="{'group_by':'vehicle_id'}"/>
+                    <filter string="Service Type" name="grp_type"    context="{'group_by':'service_type'}"/>
+                    <filter string="Month"        name="grp_month"   context="{'group_by':'service_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION — default filter: In Shop -->
+    <record id="action_ff_maintenance" model="ir.actions.act_window">
+        <field name="name">Maintenance &amp; Service Logs</field>
+        <field name="res_model">ff.maintenance</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ff_maintenance_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No service logs yet!</p>
+            <p>Log a service to automatically mark the vehicle as <strong>In Shop</strong> and remove it from dispatch.</p>
+        </field>
+    </record>
+
+</odoo>

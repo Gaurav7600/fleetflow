@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PAGE 4: TRIP DISPATCHER & MANAGEMENT
+         Wireframe:
+           Top table: Trip | Fleet Type | Origin | Destination | Status
+           Bottom form: New Trip Form (Select Vehicle, Cargo Weight,
+                        Select Driver, Origin, Destination,
+                        Estimated Fuel Cost, Confirm & Dispatch Trip)
+         Lifecycle: Draft → Dispatched → Completed → Cancelled
+         Rule: CargoWeight > MaxCapacity → BLOCKED
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- LIST VIEW — top table in wireframe -->
+    <record id="view_ff_trip_list" model="ir.ui.view">
+        <field name="name">ff.trip.list</field>
+        <field name="model">ff.trip</field>
+        <field name="arch" type="xml">
+            <list string="Trip Dispatcher &amp; Management"
+                  decoration-success="state == 'completed'"
+                  decoration-danger="state == 'cancelled'"
+                  decoration-info="state == 'dispatched'"
+                  sample="1">
+                <!-- Wireframe columns: Trip | Fleet Type | Origin | Destination | Status -->
+                <field name="name" string="Trip"/>
+                <field name="fleet_type" string="Fleet Type"/>
+                <field name="vehicle_id" string="Vehicle" optional="show"/>
+                <field name="driver_id" string="Driver" optional="show"/>
+                <field name="origin" string="Origin"/>
+                <field name="destination" string="Destination"/>
+                <field name="scheduled_date" string="Scheduled" optional="show"/>
+                <field name="cargo_weight" string="Cargo (kg)" optional="show"/>
+                <field name="vehicle_capacity" string="Capacity (kg)" optional="show"/>
+                <field name="state" string="Status"
+                       widget="badge"
+                       decoration-info="state=='dispatched'"
+                       decoration-success="state=='completed'"
+                       decoration-danger="state=='cancelled'"/>
+                <!-- Lifecycle action buttons in list -->
+                <button name="action_dispatch" type="object"
+                        string="Dispatch" class="btn-sm btn-primary"
+                        invisible="state != 'draft'"
+                        confirm="Dispatch this trip? Vehicle and driver will be locked."/>
+                <button name="action_complete" type="object"
+                        string="Complete" class="btn-sm btn-success"
+                        invisible="state != 'dispatched'"/>
+                <button name="action_cancel" type="object"
+                        string="Cancel" class="btn-sm btn-danger"
+                        invisible="state in ('completed','cancelled')"
+                        confirm="Cancel this trip?"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW — New Trip Form matching wireframe exactly -->
+    <record id="view_ff_trip_form" model="ir.ui.view">
+        <field name="name">ff.trip.form</field>
+        <field name="model">ff.trip</field>
+        <field name="arch" type="xml">
+            <form string="Trip">
+                <!-- Lifecycle statusbar — Draft→Dispatched→Completed→Cancelled -->
+                <header>
+                    <button name="action_dispatch" type="object"
+                            string="Confirm &amp; Dispatch Trip" class="btn-primary"
+                            invisible="state != 'draft'"
+                            confirm="This will lock the selected vehicle and driver. Proceed?"/>
+                    <button name="action_complete" type="object"
+                            string="Mark as Completed" class="btn-success"
+                            invisible="state != 'dispatched'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel Trip" class="btn-danger"
+                            invisible="state in ('completed','cancelled')"
+                            confirm="Are you sure you want to cancel this trip?"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft" class="btn-secondary"
+                            invisible="state != 'cancelled'"/>
+                    <!-- Lifecycle pill statusbar matching wireframe -->
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,dispatched,completed"/>
+                </header>
+                <sheet>
+                    <!-- CARGO OVERLOAD BANNER — wireframe: "Too heavy!" block -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="capacity_ok or not vehicle_id">
+                        <strong>
+                            <i class="fa fa-exclamation-circle me-2"/>
+                            Too Heavy! Cargo weight exceeds vehicle max capacity.
+                        </strong>
+                        Trip cannot be dispatched until cargo weight is reduced.
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- New Trip Form — field names match wireframe labels exactly -->
+                    <group string="New Trip Form">
+                        <group>
+                            <!-- Select Vehicle (Available only) -->
+                            <field name="vehicle_id"
+                                   string="Select Vehicle"
+                                   domain="[('state','=','available')]"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <!-- Cargo Weight — validation rule applied -->
+                            <field name="cargo_weight"
+                                   string="Cargo Weight (kg)"
+                                   readonly="state != 'draft'"/>
+                            <field name="vehicle_capacity"
+                                   string="Vehicle Max Capacity (kg)"
+                                   readonly="1"/>
+                            <field name="capacity_ok" readonly="1" widget="boolean"/>
+                        </group>
+                        <group>
+                            <!-- Select Driver (Available + valid license only) -->
+                            <field name="driver_id"
+                                   string="Select Driver"
+                                   domain="[('state','in',['available']),('license_expired','=',False)]"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="fleet_type" readonly="1" string="Fleet Type"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Route">
+                            <!-- Origin Address / Destination — wireframe labels -->
+                            <field name="origin"
+                                   string="Origin Address"
+                                   readonly="state != 'draft'"/>
+                            <field name="destination"
+                                   string="Destination"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Schedule &amp; Cost">
+                            <field name="scheduled_date"
+                                   string="Scheduled Departure"
+                                   readonly="state != 'draft'"/>
+                            <!-- Estimated Fuel Cost — wireframe field -->
+                            <field name="estimated_fuel_cost"
+                                   string="Estimated Fuel Cost"
+                                   readonly="state != 'draft'"/>
+                            <field name="revenue" string="Trip Revenue"/>
+                        </group>
+                    </group>
+
+                    <!-- Actual timestamps (shown after dispatch) -->
+                    <group invisible="state == 'draft'">
+                        <group string="Actual Journey">
+                            <field name="actual_departure" readonly="1"/>
+                            <field name="actual_arrival" readonly="1"/>
+                        </group>
+                        <group string="Odometer">
+                            <field name="odometer_start"/>
+                            <field name="odometer_end" invisible="state != 'completed'"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="cargo_description" string="Cargo Description"/>
+                        <field name="notes" placeholder="Additional notes..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW — Trip Board (grouped by state = lifecycle columns) -->
+    <record id="view_ff_trip_kanban" model="ir.ui.view">
+        <field name="name">ff.trip.kanban</field>
+        <field name="model">ff.trip</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false" sample="1"
+                    class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="fleet_type"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <field name="cargo_weight"/>
+                <field name="vehicle_capacity"/>
+                <field name="capacity_ok"/>
+                <field name="scheduled_date"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <strong class="small"><field name="name"/></strong>
+                            <field name="state" widget="label_selection"
+                                   options="{'classes': {
+                                     'draft':      'secondary',
+                                     'dispatched': 'info',
+                                     'completed':  'success',
+                                     'cancelled':  'danger'
+                                   }}"/>
+                        </div>
+                        <!-- Overload warning on card -->
+                        <div t-if="!record.capacity_ok.raw_value and record.vehicle_id.raw_value"
+                             class="alert alert-danger py-1 px-2 mt-1 mb-0 small">
+                            ⚠ Over capacity!
+                        </div>
+                        <ul class="list-unstyled small mt-2 mb-0">
+                            <li>🚛 <field name="vehicle_id"/> (<field name="fleet_type"/>)</li>
+                            <li>👤 <field name="driver_id"/></li>
+                            <li>📍 <field name="origin"/> → <field name="destination"/></li>
+                            <li>⚖ <field name="cargo_weight"/> / <field name="vehicle_capacity"/> kg</li>
+                            <li>📅 <field name="scheduled_date" widget="date"/></li>
+                        </ul>
+                        <!-- Action buttons on kanban card -->
+                        <div class="o_kanban_record_bottom mt-2">
+                            <button name="action_dispatch" type="object"
+                                    string="Dispatch" class="btn-sm btn-primary"
+                                    t-if="record.state.raw_value === 'draft'"/>
+                            <button name="action_complete" type="object"
+                                    string="Complete" class="btn-sm btn-success"
+                                    t-if="record.state.raw_value === 'dispatched'"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_ff_trip_search" model="ir.ui.view">
+        <field name="name">ff.trip.search</field>
+        <field name="model">ff.trip</field>
+        <field name="arch" type="xml">
+            <search string="Search Trips">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <separator/>
+                <filter string="Draft"      name="draft"      domain="[('state','=','draft')]"/>
+                <filter string="Dispatched" name="dispatched" domain="[('state','=','dispatched')]"/>
+                <filter string="Completed"  name="completed"  domain="[('state','=','completed')]"/>
+                <filter string="Cancelled"  name="cancelled"  domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <filter string="Trucks" name="trucks" domain="[('fleet_type','=','truck')]"/>
+                <filter string="Vans"   name="vans"   domain="[('fleet_type','=','van')]"/>
+                <filter string="Bikes"  name="bikes"  domain="[('fleet_type','=','bike')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Status"   name="grp_state"   context="{'group_by':'state'}"/>
+                    <filter string="Vehicle"  name="grp_vehicle" context="{'group_by':'vehicle_id'}"/>
+                    <filter string="Driver"   name="grp_driver"  context="{'group_by':'driver_id'}"/>
+                    <filter string="Month"    name="grp_month"   context="{'group_by':'scheduled_date:month'}"/>
+                    <filter string="Fleet Type" name="grp_type"  context="{'group_by':'fleet_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION — default to dispatched trips visible -->
+    <record id="action_ff_trip" model="ir.actions.act_window">
+        <field name="name">Trip Dispatcher &amp; Management</field>
+        <field name="res_model">ff.trip</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_ff_trip_search"/>
+        <field name="context">{'search_default_dispatched': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No trips yet!</p>
+            <p>Create a trip to assign vehicles and drivers and start dispatching.</p>
+        </field>
+    </record>
+
+</odoo>

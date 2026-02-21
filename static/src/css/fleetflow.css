@@ -1,29 +1,57 @@
-/* FleetFlow Custom Styles */
+/*
+ * FleetFlow — Minimal CSS overrides
+ * Uses Odoo's native Bootstrap/Owl classes.
+ * Only customizes status pill colors to match wireframe exactly.
+ */
 
-.o_fleetflow_badge_available {
+/* ── Status badge colors for vehicle state ───────────────── */
+/* These extend Odoo's o_status / badge widget */
+
+/* Available = green */
+.o_field_badge[name="state"] .badge.text-bg-success,
+.o_list_view .badge.text-bg-success {
     background-color: #28a745 !important;
-    color: white;
 }
 
-.o_fleetflow_badge_on_trip {
+/* On Trip = blue */
+.o_field_badge[name="state"] .badge.text-bg-info,
+.o_list_view .badge.text-bg-info {
     background-color: #17a2b8 !important;
-    color: white;
 }
 
-.o_fleetflow_badge_in_shop {
-    background-color: #ffc107 !important;
-    color: #212529;
+/* In Shop = amber/orange */
+.o_field_badge[name="state"] .badge.text-bg-warning,
+.o_list_view .badge.text-bg-warning {
+    background-color: #f59e0b !important;
+    color: #fff !important;
 }
 
-.o_fleetflow_badge_retired {
-    background-color: #6c757d !important;
-    color: white;
+/* Retired / Suspended / Cancelled = red */
+.o_field_badge[name="state"] .badge.text-bg-danger,
+.o_list_view .badge.text-bg-danger {
+    background-color: #ef4444 !important;
 }
 
-/* Dashboard KPI cards */
-.fleetflow_kpi_card {
-    border-radius: 8px;
-    padding: 16px;
-    margin: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* ── Capacity overload row highlight ─────────────────────── */
+/* Applied by decoration-danger on trip list when overloaded */
+.o_data_row.o_list_danger td {
+    background-color: #fff5f5 !important;
+}
+
+/* ── Stat button counter font boost ──────────────────────── */
+.o_stat_info .o_stat_value {
+    font-weight: 700;
+}
+
+/* ── Form sheet alert spacing ────────────────────────────── */
+.o_form_view .alert {
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+/* ── Kanban card: minimal bottom padding ─────────────────── */
+.o_kanban_record .o_kanban_record_bottom {
+    padding-top: 8px;
+    border-top: 1px solid #e9ecef;
+    margin-top: 8px;
 }

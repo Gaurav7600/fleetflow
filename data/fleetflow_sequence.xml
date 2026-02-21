@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_ff_trip" model="ir.sequence">
+            <field name="name">FleetFlow Trip</field>
+            <field name="code">ff.trip</field>
+            <field name="prefix">TRIP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <record id="seq_ff_maintenance" model="ir.sequence">
+            <field name="name">FleetFlow Maintenance</field>
+            <field name="code">ff.maintenance</field>
+            <field name="prefix">SVC/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <record id="seq_ff_fuel_expense" model="ir.sequence">
+            <field name="name">FleetFlow Fuel/Expense</field>
+            <field name="code">ff.fuel.expense</field>
+            <field name="prefix">EXP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>
