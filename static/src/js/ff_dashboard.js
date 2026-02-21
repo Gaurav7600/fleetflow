@@ -19,6 +19,7 @@ export class FleetFlowDashboard extends Component {
         actionId: { type: [Number, Boolean], optional: true },
         updateActionState: { type: Function, optional: true },
         className: { type: String, optional: true },
+        globalState: { type: Object, optional: true },
     };
 
     setup() {

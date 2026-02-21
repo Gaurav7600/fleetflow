@@ -41,8 +41,11 @@ Pages (matching wireframe blueprint):
         'web.assets_backend': [
             'fleetflow/static/src/css/fleetflow.css',
             'fleetflow/static/src/css/ff_dashboard.css',
+            'fleetflow/static/src/css/ff_analytics.css',
             'fleetflow/static/src/xml/ff_dashboard.xml',
+            'fleetflow/static/src/xml/ff_analytics.xml',
             'fleetflow/static/src/js/ff_dashboard.js',
+            'fleetflow/static/src/js/ff_analytics.js',
         ],
     },
     'installable': True,

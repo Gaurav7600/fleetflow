@@ -17,7 +17,7 @@
         id="menu_fleetflow_root"
         name="Fleet Flow"
         sequence="50"
-        web_icon="fleetflow2,static/src/img/icon.png"/>
+        web_icon="fleetflow,static/description/icon2.png"/>
 
     <!-- ── 1. Dashboard ───────────────────────────────────────────── -->
     <!-- Wireframe: "Dashboard" top item in sidebar — OWL Command Center -->
@@ -74,15 +74,16 @@
         sequence="60"/>
 
     <!-- ── 7. Analytics ───────────────────────────────────────────── -->
-    <!-- Wireframe: "Analytics" sidebar item = Page 8 -->
+    <!-- OWL Analytics Dashboard -->
     <menuitem
         id="menu_ff_analytics"
         name="Analytics"
         parent="menu_fleetflow_root"
+        action="action_ff_analytics_client"
         sequence="70"/>
 
     <!-- Analytics sub-items -->
-    <menuitem
+    <!-- <menuitem
         id="menu_ff_analytics_fleet"
         name="Fleet ROI &amp; Efficiency"
         parent="menu_ff_analytics"
@@ -108,7 +109,7 @@
         name="Top Efficient Vehicles"
         parent="menu_ff_analytics"
         action="action_ff_top_efficient"
-        sequence="40"/>
+        sequence="40"/> -->
 
     <!-- ── Quick Access from Dashboard KPI tiles ─────────────────── -->
     <!-- These aren't sidebar items but actions linked from dashboard -->
