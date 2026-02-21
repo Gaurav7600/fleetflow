@@ -1,34 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ── OWL Client Action ─────────────────────────────────────────── -->
     <record id="action_ff_analytics_client" model="ir.actions.client">
         <field name="name">Analytics GAURAV &amp; Financial Reports</field>
         <field name="tag">fleetflow_analytics</field>
     </record>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         PAGE 8: OPERATIONAL ANALYTICS & FINANCIAL REPORTS
-         Wireframe:
-           KPI row: Total Fuel Cost | Fleet ROI (+12.5%) | Utilization Mode
-           Charts: Fuel Efficiency Trend (line) | Top 5 Efficient Vehicles (bar)
-           Table: Financial Summary of Month
-                  Columns: Month | Revenue | Fuel Cost | Maintenance | Net Profit
-         Exports: CSV/PDF one-click
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- ── VEHICLE ANALYTICS ───────────────────────────────────────── -->
-
-    <!-- Pivot: ROI & cost breakdown per vehicle — Financial Summary -->
     <record id="view_ff_vehicle_pivot" model="ir.ui.view">
         <field name="name">ff.vehicle.analytics.pivot</field>
         <field name="model">ff.vehicle</field>
         <field name="arch" type="xml">
             <pivot string="Fleet Financial Summary" sample="1" disable_linking="0">
-                <!-- Row: vehicle, col: vehicle_type — Financial Summary of Month -->
                 <field name="vehicle_type" type="row"/>
                 <field name="name" type="row"/>
-                <!-- Measures matching wireframe: Revenue | Fuel Cost | Maintenance | Net Profit(ROI) -->
                 <field name="total_revenue"           type="measure" string="Revenue"/>
                 <field name="total_fuel_cost"         type="measure" string="Fuel Cost"/>
                 <field name="total_maintenance_cost"  type="measure" string="Maintenance"/>
@@ -41,12 +25,10 @@
         </field>
     </record>
 
-    <!-- Graph: Fuel Efficiency Trend (km/L) — line chart matching wireframe -->
     <record id="view_ff_vehicle_graph_efficiency" model="ir.ui.view">
         <field name="name">ff.vehicle.graph.efficiency</field>
         <field name="model">ff.vehicle</field>
         <field name="arch" type="xml">
-            <!-- Line chart = Fuel Efficiency Trend (km/L) -->
             <graph string="Fuel Efficiency Trend (km/L)" type="line" sample="1">
                 <field name="name" type="row"/>
                 <field name="fuel_efficiency" type="measure" string="km/L"/>
@@ -54,12 +36,10 @@
         </field>
     </record>
 
-    <!-- Graph: Top 5 Efficient Vehicles (bar) — bar chart matching wireframe -->
     <record id="view_ff_vehicle_graph_roi" model="ir.ui.view">
         <field name="name">ff.vehicle.graph.roi</field>
         <field name="model">ff.vehicle</field>
         <field name="arch" type="xml">
-            <!-- Bar chart = Top 5 Efficient Vehicles / Fleet ROI -->
             <graph string="Top 5 Efficient Vehicles — ROI &amp; Cost" type="bar" sample="1" order="desc">
                 <field name="name" type="row"/>
                 <field name="vehicle_roi" type="measure" string="ROI (%)"/>
@@ -69,18 +49,14 @@
         </field>
     </record>
 
-    <!-- ── TRIP ANALYTICS ───────────────────────────────────────────── -->
 
-    <!-- Pivot: Financial Summary of Month — matches wireframe table -->
     <record id="view_ff_trip_pivot_monthly" model="ir.ui.view">
         <field name="name">ff.trip.pivot.monthly</field>
         <field name="model">ff.trip</field>
         <field name="arch" type="xml">
             <pivot string="Financial Summary of Month" sample="1">
-                <!-- Group by month — wireframe "Month" column -->
                 <field name="scheduled_date" interval="month" type="row" string="Month"/>
                 <field name="fleet_type" type="col" string="Fleet Type"/>
-                <!-- Wireframe columns: Revenue | Fuel Cost(via expense) | Net Profit -->
                 <field name="revenue"       type="measure" string="Revenue"/>
                 <field name="cargo_weight"  type="measure" string="Cargo (kg)"/>
                 <field name="distance_km"   type="measure" string="Distance (km)"/>
@@ -88,7 +64,6 @@
         </field>
     </record>
 
-    <!-- Graph: Trip Revenue Trend (line) -->
     <record id="view_ff_trip_graph_monthly" model="ir.ui.view">
         <field name="name">ff.trip.graph.monthly</field>
         <field name="model">ff.trip</field>
@@ -100,9 +75,7 @@
         </field>
     </record>
 
-    <!-- ── EXPENSE ANALYTICS ─────────────────────────────────────────── -->
 
-    <!-- Pivot: Total Fuel Cost breakdown -->
     <record id="view_ff_expense_pivot" model="ir.ui.view">
         <field name="name">ff.expense.pivot</field>
         <field name="model">ff.fuel.expense</field>
@@ -119,7 +92,6 @@
         </field>
     </record>
 
-    <!-- Graph: Total Fuel Cost (bar) — wireframe "Total Fuel Cost" KPI tile -->
     <record id="view_ff_expense_graph" model="ir.ui.view">
         <field name="name">ff.expense.graph</field>
         <field name="model">ff.fuel.expense</field>
@@ -132,9 +104,7 @@
         </field>
     </record>
 
-    <!-- ── ACTIONS ────────────────────────────────────────────────────── -->
 
-    <!-- Fleet Analytics — pivot + graph (both charts in wireframe) -->
     <record id="action_ff_fleet_analytics" model="ir.actions.act_window">
         <field name="name">Fleet Analytics — ROI &amp; Efficiency</field>
         <field name="res_model">ff.vehicle</field>
@@ -145,7 +115,6 @@
             (0,0,{'view_mode':'list'})]"/>
     </record>
 
-    <!-- Financial Summary — Trip monthly pivot -->
     <record id="action_ff_financial_summary" model="ir.actions.act_window">
         <field name="name">Financial Summary of Month</field>
         <field name="res_model">ff.trip</field>
@@ -156,7 +125,6 @@
             (0,0,{'view_mode':'list'})]"/>
     </record>
 
-    <!-- Expense Analytics -->
     <record id="action_ff_expense_analytics" model="ir.actions.act_window">
         <field name="name">Fuel &amp; Expense Analytics</field>
         <field name="res_model">ff.fuel.expense</field>
@@ -167,7 +135,6 @@
             (0,0,{'view_mode':'list'})]"/>
     </record>
 
-    <!-- Top 5 efficient vehicles — separate action for wireframe right chart -->
     <record id="action_ff_top_efficient" model="ir.actions.act_window">
         <field name="name">Top Efficient Vehicles</field>
         <field name="res_model">ff.vehicle</field>

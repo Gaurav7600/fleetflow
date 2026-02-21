@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         COMMAND CENTER DASHBOARD — FleetFlow 18.0
-         Blueprint: KPI tiles + search/filter + trip table
-    ══════════════════════════════════════════════════════════════ -->
 
-    <!-- ── Client Action (OWL Dashboard) ─────────────────────────── -->
     <record id="action_ff_dashboard_client" model="ir.actions.client">
         <field name="name">Command Center</field>
         <field name="tag">fleetflow_dashboard</field>
     </record>
 
-    <!-- ── Shortcut actions for KPI tile drill-down ──────────────── -->
+
     <record id="action_ff_active_fleet" model="ir.actions.act_window">
         <field name="name">Active Fleet (On Trip)</field>
         <field name="res_model">ff.vehicle</field>
@@ -49,7 +44,6 @@
         <field name="domain">[('days_to_expiry','&gt;=',0),('days_to_expiry','&lt;=',30)]</field>
     </record>
 
-    <!-- ── Fallback trip list view ────────────────────────────────── -->
     <record id="view_ff_dashboard_trip_list" model="ir.ui.view">
         <field name="name">ff.trip.dashboard.list</field>
         <field name="model">ff.trip</field>
@@ -84,7 +78,7 @@
         </field>
     </record>
 
-    <!-- ── Legacy act_window (kept for backward compat) ──────────── -->
+
     <record id="action_ff_dashboard" model="ir.actions.act_window">
         <field name="name">Command Center (Trips)</field>
         <field name="res_model">ff.trip</field>

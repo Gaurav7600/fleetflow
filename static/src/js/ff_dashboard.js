@@ -1,13 +1,4 @@
 /** @odoo-module **/
-/**
- * FleetFlow — Command Center Dashboard (Odoo 18 OWL Component)
- *
- * Displays:
- *   • KPI tiles: Active Fleet | Maintenance Alerts | Pending Cargo | Utilization Rate
- *   • Trip table with live search, group-by, filter, and sort
- *   • New Trip / New Vehicle quick-action buttons
- */
-
 import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
@@ -28,16 +19,13 @@ export class FleetFlowDashboard extends Component {
         this.notification = useService("notification");
 
         this.state = useState({
-            // KPIs
             activeFleet: 0,
             maintenanceAlerts: 0,
             pendingCargo: 0,
             utilizationRate: 0,
             totalVehicles: 0,
-            // Trip table
             trips: [],
             loading: true,
-            // Search / filter
             searchQuery: "",
             filterStatus: "all",
             filterFleetType: "all",
@@ -50,7 +38,6 @@ export class FleetFlowDashboard extends Component {
         });
     }
 
-    // ── Data Loading ──────────────────────────────────────────────────────────
 
     async _loadDashboardData() {
         this.state.loading = true;
@@ -65,7 +52,6 @@ export class FleetFlowDashboard extends Component {
     }
 
     async _loadKPIs() {
-        // Vehicle state counts
         const vehicleGroups = await this.orm.readGroup(
             "ff.vehicle",
             [["active", "=", true]],
@@ -81,12 +67,10 @@ export class FleetFlowDashboard extends Component {
             else if (g.state === "available") available = g.state_count;
         }
 
-        // Pending cargo = draft trips
         const pendingCargo = await this.orm.searchCount("ff.trip", [
             ["state", "=", "draft"],
         ]);
 
-        // Utilization = on_trip / total active (excluding retired)
         const activeVehicles = onTrip + inShop + available;
         const utilRate = activeVehicles > 0
             ? Math.round((onTrip / activeVehicles) * 100)
@@ -100,7 +84,6 @@ export class FleetFlowDashboard extends Component {
     }
 
     async _loadTrips() {
-        // Build domain from filters
         const domain = this._buildDomain();
 
         const trips = await this.orm.searchRead(
@@ -136,8 +119,6 @@ export class FleetFlowDashboard extends Component {
         }
         return domain;
     }
-
-    // ── Event Handlers ────────────────────────────────────────────────────────
 
     async onSearchInput(ev) {
         this.state.searchQuery = ev.target.value;
@@ -268,8 +249,6 @@ export class FleetFlowDashboard extends Component {
         await this._loadDashboardData();
         this.notification.add("Dashboard refreshed", { type: "info" });
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     getStatusBadgeClass(state) {
         return {

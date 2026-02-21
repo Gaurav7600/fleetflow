@@ -4,23 +4,6 @@
 <t t-name="fleetflow.Analytics">
 <div class="ffa-page">
 
-    <!-- ══ Top Bar ═══════════════════════════════════════════════════════ -->
-    <div class="ffa-topbar">
-        <div class="ffa-topbar-left">
-            <span class="ffa-brand">Fleet Flow</span>
-            <span class="ffa-breadcrumb">/ Analytics &amp; Reports</span>
-        </div>
-        <div class="ffa-topbar-right">
-            <button class="ffa-btn ffa-btn-ghost" t-on-click="onRefresh">
-                <i class="fa fa-refresh"/> Refresh
-            </button>
-            <button class="ffa-btn ffa-btn-csv" t-on-click="exportCSV">
-                <i class="fa fa-download"/> Export CSV
-            </button>
-        </div>
-    </div>
-
-    <!-- ══ Page Title ════════════════════════════════════════════════════ -->
     <div class="ffa-page-header">
         <div>
             <h1 class="ffa-page-title">
@@ -32,41 +15,8 @@
         </div>
     </div>
 
-    <!-- Loading state -->
-    <t t-if="state.loading">
-        <div class="ffa-loading">
-            <i class="fa fa-spinner fa-spin fa-3x"/>
-            <p>Crunching your fleet numbers…</p>
-        </div>
-    </t>
-
-    <t t-else="">
-
-        <!-- ══ KPI Row ══════════════════════════════════════════════════ -->
         <div class="ffa-kpi-row">
 
-            <!-- Total Fuel Cost -->
-            <div class="ffa-kpi ffa-kpi-fuel">
-                <div class="ffa-kpi-top">
-                    <span class="ffa-kpi-label">Total Fuel Cost</span>
-                    <i class="fa fa-tint ffa-kpi-icon-sm"/>
-                </div>
-                <div class="ffa-kpi-value" t-esc="fmtCurrency(state.totalFuelCost)"/>
-                <div class="ffa-kpi-foot">All vehicles combined</div>
-            </div>
-
-            <!-- Fleet ROI -->
-            <div class="ffa-kpi ffa-kpi-roi">
-                <div class="ffa-kpi-top">
-                    <span class="ffa-kpi-label">Fleet ROI</span>
-                    <i class="fa fa-line-chart ffa-kpi-icon-sm"/>
-                </div>
-                <div class="ffa-kpi-value" t-att-class="state.fleetROI >= 0 ? 'ffa-roi-pos' : 'ffa-roi-neg'"
-                     t-esc="fmtROI(state.fleetROI)"/>
-                <div class="ffa-kpi-foot">Avg across fleet</div>
-            </div>
-
-            <!-- Utilization Rate -->
             <div class="ffa-kpi ffa-kpi-util">
                 <div class="ffa-kpi-top">
                     <span class="ffa-kpi-label">Utilization Rate</span>
@@ -82,21 +32,6 @@
                 <div class="ffa-kpi-foot">Vehicles currently on road</div>
             </div>
 
-            <!-- Net Profit -->
-            <div class="ffa-kpi ffa-kpi-profit">
-                <div class="ffa-kpi-top">
-                    <span class="ffa-kpi-label">Net Profit</span>
-                    <i class="fa fa-inr ffa-kpi-icon-sm"/>
-                </div>
-                <div class="ffa-kpi-value"
-                     t-att-class="state.netProfit >= 0 ? 'ffa-roi-pos' : 'ffa-roi-neg'"
-                     t-esc="fmtCurrency(state.netProfit)"/>
-                <div class="ffa-kpi-foot">Revenue minus all costs</div>
-            </div>
-
-        </div>
-
-        <!-- ══ Tab Navigation ══════════════════════════════════════════ -->
         <div class="ffa-tabs">
             <button t-att-class="'ffa-tab' + (state.activeTab === 'overview' ? ' ffa-tab-active' : '')"
                     t-on-click="() => setTab('overview')">
@@ -115,11 +50,6 @@
             </button>
         </div>
 
-        <!-- ══ TAB: Overview & Charts ══════════════════════════════════ -->
-        <t t-if="state.activeTab === 'overview'">
-            <div class="ffa-charts-row">
-
-                <!-- Fuel Efficiency Trend -->
                 <div class="ffa-chart-card">
                     <div class="ffa-chart-header">
                         <div class="ffa-chart-title-wrap">
@@ -150,40 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 Costliest Vehicles -->
-                <div class="ffa-chart-card">
-                    <div class="ffa-chart-header">
-                        <div class="ffa-chart-title-wrap">
-                            <div class="ffa-chart-icon ffa-icon-orange">
-                                <i class="fa fa-bar-chart"/>
-                            </div>
-                            <div>
-                                <div class="ffa-chart-title">Top 5 Costliest Vehicles</div>
-                                <div class="ffa-chart-sub">Total operational cost</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ffa-chart-body">
-                        <t t-if="state.topCostlySVG">
-                            <t t-out="state.topCostlySVG"/>
-                        </t>
-                        <t t-else="">
-                            <div class="ffa-chart-empty">
-                                <i class="fa fa-bar-chart fa-2x"/>
-                                <p>No expense data available yet</p>
-                            </div>
-                        </t>
-                    </div>
-                    <div class="ffa-chart-footer">
-                        <span class="ffa-chart-hint">
-                            <i class="fa fa-info-circle"/> Review high-cost vehicles for ROI analysis
-                        </span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Summary Stat Strip -->
             <div class="ffa-stat-strip">
                 <div class="ffa-stat-item">
                     <div class="ffa-stat-label">Total Revenue</div>
@@ -213,101 +109,6 @@
             </div>
         </t>
 
-        <!-- ══ TAB: Financial Summary of Month ═══════════════════════ -->
-        <t t-if="state.activeTab === 'monthly'">
-            <div class="ffa-table-card">
-                <div class="ffa-table-header">
-                    <div class="ffa-table-title-wrap">
-                        <div class="ffa-chart-icon ffa-icon-blue">
-                            <i class="fa fa-table"/>
-                        </div>
-                        <div>
-                            <div class="ffa-chart-title">Financial Summary of Month</div>
-                            <div class="ffa-chart-sub">Last 12 months • All amounts in Rs.</div>
-                        </div>
-                    </div>
-                    <button class="ffa-btn ffa-btn-csv" t-on-click="exportCSV">
-                        <i class="fa fa-file-excel-o"/> Export CSV
-                    </button>
-                </div>
-
-                <t t-if="state.monthlySummary.length === 0">
-                    <div class="ffa-empty-state">
-                        <i class="fa fa-table fa-3x"/>
-                        <p>No financial data yet. Complete trips and log expenses to see reports.</p>
-                    </div>
-                </t>
-
-                <t t-else="">
-                    <div class="ffa-table-wrap">
-                        <table class="ffa-table">
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th class="ffa-th-right">Revenue</th>
-                                    <th class="ffa-th-right">Fuel Cost</th>
-                                    <th class="ffa-th-right">Maintenance</th>
-                                    <th class="ffa-th-right">Net Profit</th>
-                                    <th class="ffa-th-center">Health</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="state.monthlySummary" t-as="row" t-key="row.key">
-                                    <tr class="ffa-tr">
-                                        <td class="ffa-td-month">
-                                            <i class="fa fa-calendar-o"/> <t t-esc="row.label"/>
-                                        </td>
-                                        <td class="ffa-td-right ffa-col-rev"
-                                            t-esc="fmtCurrency(row.revenue)"/>
-                                        <td class="ffa-td-right ffa-col-fuel"
-                                            t-esc="fmtCurrency(row.fuelCost)"/>
-                                        <td class="ffa-td-right ffa-col-maint"
-                                            t-esc="fmtCurrency(row.maintenance)"/>
-                                        <td class="ffa-td-right">
-                                            <span t-att-class="'ffa-profit-pill ' + getProfitClass(row.netProfit)"
-                                                  t-esc="fmtCurrency(row.netProfit)"/>
-                                        </td>
-                                        <td class="ffa-td-center">
-                                            <span t-if="row.netProfit > 0" class="ffa-health-pill ffa-health-good">
-                                                <i class="fa fa-arrow-up"/> Profit
-                                            </span>
-                                            <span t-elif="row.netProfit === 0" class="ffa-health-pill ffa-health-zero">
-                                                Break-even
-                                            </span>
-                                            <span t-else="" class="ffa-health-pill ffa-health-bad">
-                                                <i class="fa fa-arrow-down"/> Loss
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                            <tfoot>
-                                <tr class="ffa-tfoot-row">
-                                    <td><strong>Total</strong></td>
-                                    <td class="ffa-td-right ffa-col-rev">
-                                        <strong t-esc="fmtCurrency(state.monthlySummary.reduce((s,r) => s + r.revenue, 0))"/>
-                                    </td>
-                                    <td class="ffa-td-right ffa-col-fuel">
-                                        <strong t-esc="fmtCurrency(state.monthlySummary.reduce((s,r) => s + r.fuelCost, 0))"/>
-                                    </td>
-                                    <td class="ffa-td-right ffa-col-maint">
-                                        <strong t-esc="fmtCurrency(state.monthlySummary.reduce((s,r) => s + r.maintenance, 0))"/>
-                                    </td>
-                                    <td class="ffa-td-right">
-                                        <strong
-                                            t-att-class="'ffa-profit-pill ' + getProfitClass(state.netProfit)"
-                                            t-esc="fmtCurrency(state.netProfit)"/>
-                                    </td>
-                                    <td/>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </t>
-            </div>
-        </t>
-
-        <!-- ══ TAB: Dead Stock Alerts ══════════════════════════════════ -->
         <t t-if="state.activeTab === 'deadstock'">
             <div class="ffa-table-card">
                 <div class="ffa-table-header">
@@ -335,65 +136,6 @@
                 </t>
 
                 <t t-else="">
-                    <!-- Alert Banner -->
-                    <div class="ffa-alert-banner">
-                        <i class="fa fa-exclamation-circle"/>
-                        <strong t-esc="state.deadStockVehicles.length"/> vehicle(s) have been idle for 30+ days.
-                        Consider reassigning them or reviewing for disposal.
-                    </div>
-
-                    <div class="ffa-dead-grid">
-                        <t t-foreach="state.deadStockVehicles" t-as="v" t-key="v.id">
-                            <div class="ffa-dead-card" t-on-click="() => this.onVehicleClick(v.id)">
-                                <div class="ffa-dead-card-top">
-                                    <div class="ffa-dead-vehicle-icon">
-                                        <i t-att-class="'fa ' + (v.type === 'truck' ? 'fa-truck' : v.type === 'bike' ? 'fa-motorcycle' : 'fa-car')"/>
-                                    </div>
-                                    <div class="ffa-dead-info">
-                                        <div class="ffa-dead-name" t-esc="v.name"/>
-                                        <div class="ffa-dead-type">
-                                            <span class="ffa-type-tag" t-esc="v.type"/>
-                                        </div>
-                                    </div>
-                                    <div class="ffa-idle-badge">
-                                        <i class="fa fa-clock-o"/> 30+ days idle
-                                    </div>
-                                </div>
-                                <div class="ffa-dead-stats">
-                                    <div class="ffa-dead-stat">
-                                        <span class="ffa-dead-stat-lbl">Odometer</span>
-                                        <span class="ffa-dead-stat-val">
-                                            <t t-esc="v.odometer.toLocaleString()"/> km
-                                        </span>
-                                    </div>
-                                    <div class="ffa-dead-stat">
-                                        <span class="ffa-dead-stat-lbl">Total Cost</span>
-                                        <span class="ffa-dead-stat-val ffa-stat-red"
-                                              t-esc="fmtCurrency(v.totalCost)"/>
-                                    </div>
-                                    <div class="ffa-dead-stat">
-                                        <span class="ffa-dead-stat-lbl">Revenue</span>
-                                        <span class="ffa-dead-stat-val ffa-stat-green"
-                                              t-esc="fmtCurrency(v.totalRevenue)"/>
-                                    </div>
-                                    <div class="ffa-dead-stat">
-                                        <span class="ffa-dead-stat-lbl">ROI</span>
-                                        <span t-att-class="'ffa-dead-stat-val ' + (v.totalRevenue > v.totalCost ? 'ffa-stat-green' : 'ffa-stat-red')">
-                                            <t t-esc="v.totalCost > 0 ? (((v.totalRevenue - v.totalCost) / v.totalCost) * 100).toFixed(1) + '%' : '—'"/>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="ffa-dead-cta">
-                                    <span class="ffa-dead-link">View Vehicle <i class="fa fa-chevron-right"/></span>
-                                </div>
-                            </div>
-                        </t>
-                    </div>
-                </t>
-            </div>
-        </t>
-
-    </t><!-- end t-else loading -->
 </div>
 </t>
 

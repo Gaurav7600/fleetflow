@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         PAGE 3: VEHICLE REGISTRY (Asset Management)
-         Wireframe: List table with ID, Plate, Model, Type, Capacity,
-                    Odometer, Status, Actions
-                    Side panel: New Vehicle Registration form
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- LIST VIEW — matches wireframe table columns exactly -->
     <record id="view_ff_vehicle_list" model="ir.ui.view">
         <field name="name">ff.vehicle.list</field>
         <field name="model">ff.vehicle</field>
@@ -19,7 +11,6 @@
                   decoration-info="state == 'on_trip'"
                   edit="1"
                   sample="1">
-                <!-- Columns matching wireframe: ID | Plate | Model | Type | Capacity | Odometer | Status | Actions -->
                 <field name="name" string="Name / Model"/>
                 <field name="license_plate" string="License Plate"/>
                 <field name="vehicle_type" string="Type"/>
@@ -32,9 +23,6 @@
                        decoration-warning="state == 'in_shop'"
                        decoration-danger="state == 'retired'"/>
                 <field name="region" string="Region" optional="show"/>
-                <field name="fuel_efficiency" string="km/L" optional="show"/>
-                <!-- Action buttons matching wireframe "Actions" column -->
-                <button name="action_set_available" type="object"
                         string="Activate" class="btn-sm btn-success"
                         invisible="state == 'available'"/>
                 <button name="action_set_retired" type="object"
@@ -45,7 +33,6 @@
         </field>
     </record>
 
-    <!-- FORM VIEW — New Vehicle Registration (matches wireframe side form) -->
     <record id="view_ff_vehicle_form" model="ir.ui.view">
         <field name="name">ff.vehicle.form</field>
         <field name="model">ff.vehicle</field>
@@ -63,7 +50,6 @@
                            statusbar_visible="available,on_trip,in_shop,retired"/>
                 </header>
                 <sheet>
-                    <!-- Stat buttons — smart buttons bar -->
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_trips" type="object"
                                 class="oe_stat_button" icon="fa-road">
@@ -77,7 +63,6 @@
                         </button>
                     </div>
 
-                    <!-- Out-of-service warning banner -->
                     <div class="alert alert-warning o_form_fields_group_separator" role="alert"
                          invisible="not out_of_service">
                         <i class="fa fa-exclamation-triangle me-2"/>
@@ -91,7 +76,6 @@
                         </h1>
                     </div>
 
-                    <!-- New Vehicle Registration — matching wireframe form fields -->
                     <group>
                         <group string="Vehicle Details">
                             <field name="license_plate" placeholder="e.g. MH-12-AB-1234"/>
@@ -107,7 +91,6 @@
                         </group>
                     </group>
 
-                    <!-- Financial Summary Section -->
                     <group string="Operational Cost Summary" col="4">
                         <field name="total_fuel_cost" widget="monetary" string="Fuel Cost" readonly="1"/>
                         <field name="total_maintenance_cost" widget="monetary" string="Maintenance" readonly="1"/>
@@ -119,7 +102,6 @@
                         <field name="total_revenue" widget="monetary" readonly="1"/>
                     </group>
 
-                    <!-- Tabbed sub-sections -->
                     <notebook>
                         <page string="Trip History" name="trips">
                             <field name="trip_ids" readonly="1">
@@ -172,7 +154,6 @@
         </field>
     </record>
 
-    <!-- KANBAN VIEW — Vehicle cards grouped by status -->
     <record id="view_ff_vehicle_kanban" model="ir.ui.view">
         <field name="name">ff.vehicle.kanban</field>
         <field name="model">ff.vehicle</field>
@@ -215,7 +196,6 @@
         </field>
     </record>
 
-    <!-- SEARCH VIEW -->
     <record id="view_ff_vehicle_search" model="ir.ui.view">
         <field name="name">ff.vehicle.search</field>
         <field name="model">ff.vehicle</field>
@@ -225,13 +205,11 @@
                 <field name="license_plate"/>
                 <field name="region"/>
                 <separator/>
-                <!-- Status filters matching wireframe filter pills -->
                 <filter string="Available" name="available" domain="[('state','=','available')]"/>
                 <filter string="On Trip"   name="on_trip"   domain="[('state','=','on_trip')]"/>
                 <filter string="In Shop"   name="in_shop"   domain="[('state','=','in_shop')]"/>
                 <filter string="Retired"   name="retired"   domain="[('state','=','retired')]"/>
                 <separator/>
-                <!-- Type filters matching wireframe: Truck/Van/Bike -->
                 <filter string="Trucks" name="truck" domain="[('vehicle_type','=','truck')]"/>
                 <filter string="Vans"   name="van"   domain="[('vehicle_type','=','van')]"/>
                 <filter string="Bikes"  name="bike"  domain="[('vehicle_type','=','bike')]"/>
@@ -244,7 +222,6 @@
         </field>
     </record>
 
-    <!-- ACTION -->
     <record id="action_ff_vehicle" model="ir.actions.act_window">
         <field name="name">Vehicle Registry</field>
         <field name="res_model">ff.vehicle</field>

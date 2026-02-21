@@ -10,7 +10,6 @@ class FleetFlowVehicle(models.Model):
     _rec_name = 'name'
     _order = 'name asc'
 
-    # ── Identification ────────────────────────────────────────────────────────
     name = fields.Char(string='Vehicle Name / Model', required=True, tracking=True)
     license_plate = fields.Char(string='License Plate', required=True, copy=False, tracking=True)
     vehicle_type = fields.Selection([
@@ -20,30 +19,21 @@ class FleetFlowVehicle(models.Model):
         ('other', 'Other'),
     ], string='Type', required=True, default='van', tracking=True)
     region = fields.Char(string='Region / Base')
-
-    # ── Capacity & Odometer ───────────────────────────────────────────────────
     max_load_capacity = fields.Float(string='Max Load Capacity (kg)', required=True)
     odometer = fields.Float(string='Odometer (km)', tracking=True)
     acquisition_cost = fields.Float(string='Acquisition Cost')
     acquisition_date = fields.Date(string='Acquisition Date')
-
-    # ── Status ────────────────────────────────────────────────────────────────
     state = fields.Selection([
         ('available', 'Available'),
         ('on_trip', 'On Trip'),
         ('in_shop', 'In Shop'),
         ('retired', 'Retired'),
     ], string='Status', default='available', tracking=True, index=True)
-
     out_of_service = fields.Boolean(string='Out of Service (Retired)', tracking=True)
     active = fields.Boolean(default=True)
-
-    # ── Relations ─────────────────────────────────────────────────────────────
     trip_ids = fields.One2many('ff.trip', 'vehicle_id', string='Trips')
     maintenance_ids = fields.One2many('ff.maintenance', 'vehicle_id', string='Service Logs')
     fuel_expense_ids = fields.One2many('ff.fuel.expense', 'vehicle_id', string='Fuel / Expenses')
-
-    # ── Computed Financials ───────────────────────────────────────────────────
     total_fuel_cost = fields.Float(string='Total Fuel Cost', compute='_compute_costs', store=True)
     total_maintenance_cost = fields.Float(string='Total Maintenance Cost', compute='_compute_costs', store=True)
     total_operational_cost = fields.Float(string='Total Operational Cost', compute='_compute_costs', store=True)
@@ -51,8 +41,6 @@ class FleetFlowVehicle(models.Model):
     vehicle_roi = fields.Float(string='ROI (%)', compute='_compute_roi', store=True, digits=(16, 2))
     trip_count = fields.Integer(string='Trips', compute='_compute_trip_count')
     fuel_efficiency = fields.Float(string='Fuel Efficiency (km/L)', compute='_compute_fuel_efficiency', store=True, digits=(16, 2))
-
-    # ── SQL Constraints ───────────────────────────────────────────────────────
     _sql_constraints = [
         ('license_plate_uniq', 'UNIQUE(license_plate)', 'License plate must be unique!'),
     ]

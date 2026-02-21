@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         PAGE 5: MAINTENANCE & SERVICE LOGS
-         Wireframe:
-           Side form: New Service (Vehicle Name, Date/Service, Date) + Create/Cancel
-           Main table: Log ID | Vehicle | Date/Service | Date | Status
-           Auto-logic: Creating a log → Vehicle status = "In Shop"
-                       → Hidden from dispatcher pool
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- LIST VIEW — wireframe table: Log ID | Vehicle | Date/Service | Date | Status -->
     <record id="view_ff_maintenance_list" model="ir.ui.view">
         <field name="name">ff.maintenance.list</field>
         <field name="model">ff.maintenance</field>
@@ -19,7 +9,6 @@
                   decoration-warning="state == 'open'"
                   decoration-success="state == 'done'"
                   sample="1">
-                <!-- Wireframe columns: Log ID | Vehicle | Date/Service | Date | Status -->
                 <field name="name" string="Log ID"/>
                 <field name="vehicle_id" string="Vehicle"/>
                 <field name="service_type" string="Date / Service"/>
@@ -31,7 +20,6 @@
                        widget="badge"
                        decoration-warning="state=='open'"
                        decoration-success="state=='done'"/>
-                <!-- Release button — matching wireframe workflow -->
                 <button name="action_complete_service" type="object"
                         string="Release Vehicle" class="btn-sm btn-success"
                         invisible="state == 'done'"
@@ -40,7 +28,6 @@
         </field>
     </record>
 
-    <!-- FORM VIEW — New Service form matching wireframe side panel -->
     <record id="view_ff_maintenance_form" model="ir.ui.view">
         <field name="name">ff.maintenance.form</field>
         <field name="model">ff.maintenance</field>
@@ -54,7 +41,6 @@
                     <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                 </header>
                 <sheet>
-                    <!-- In Shop auto-logic banner -->
                     <div class="alert alert-warning" role="alert" invisible="state == 'done'">
                         <i class="fa fa-wrench me-2"/>
                         Vehicle <strong><field name="vehicle_id" readonly="1"/></strong>
@@ -70,7 +56,6 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
 
-                    <!-- New Service Form — matches wireframe: Vehicle Name, Date/Service, Date -->
                     <group string="New Service">
                         <group>
                             <field name="vehicle_id"
@@ -100,7 +85,6 @@
         </field>
     </record>
 
-    <!-- SEARCH VIEW -->
     <record id="view_ff_maintenance_search" model="ir.ui.view">
         <field name="name">ff.maintenance.search</field>
         <field name="model">ff.maintenance</field>
@@ -121,7 +105,6 @@
         </field>
     </record>
 
-    <!-- ACTION — default filter: In Shop -->
     <record id="action_ff_maintenance" model="ir.actions.act_window">
         <field name="name">Maintenance &amp; Service Logs</field>
         <field name="res_model">ff.maintenance</field>

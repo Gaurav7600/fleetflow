@@ -1,20 +1,7 @@
 /** @odoo-module **/
-/**
- * FleetFlow — Analytics & Financial Reports (Odoo 18 OWL Component)
- *
- * Sections:
- *   1. KPI row: Total Fuel Cost | Fleet ROI | Utilization Rate
- *   2. Charts: Fuel Efficiency Trend (SVG line) | Top 5 Costliest Vehicles (SVG bar)
- *   3. Financial Summary of Month table (Month | Revenue | Fuel Cost | Maintenance | Net Profit)
- *   4. Dead Stock Alerts (idle vehicles)
- *   5. One-click CSV export
- */
-
 import { Component, useState, onWillStart, useRef, onMounted, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-
-// ── SVG Chart Helpers ──────────────────────────────────────────────────────
 
 function makeSVGLine(points, width, height, color = "#7c3aed", fillColor = null) {
     if (!points || points.length < 2) return "";
@@ -126,8 +113,6 @@ function makeSVGBar(bars, width, height) {
     </svg>`;
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────
-
 export class FleetFlowAnalytics extends Component {
     static template = "fleetflow.Analytics";
     static props = {};
@@ -138,23 +123,18 @@ export class FleetFlowAnalytics extends Component {
         this.notification = useService("notification");
 
         this.state = useState({
-            // KPIs
             totalFuelCost: 0,
             fleetROI: 0,
             utilizationRate: 0,
             totalRevenue: 0,
             totalMaintenance: 0,
             netProfit: 0,
-            // Charts data
             efficiencyChartSVG: "",
             topCostlySVG: "",
-            // Financial table
             monthlySummary: [],
-            // Dead stock
             deadStockVehicles: [],
-            // UI
             loading: true,
-            activeTab: "overview",          // overview | monthly | deadstock
+            activeTab: "overview",
             selectedYear: new Date().getFullYear(),
         });
 
@@ -164,7 +144,6 @@ export class FleetFlowAnalytics extends Component {
         });
     }
 
-    // ── Data Loading ────────────────────────────────────────────────────────
 
     async _loadAll() {
         this.state.loading = true;
@@ -182,7 +161,6 @@ export class FleetFlowAnalytics extends Component {
     }
 
     async _loadKPIs() {
-        // Aggregate from ff.vehicle computed fields
         const vehicles = await this.orm.searchRead(
             "ff.vehicle",
             [["active", "=", true], ["state", "!=", "retired"]],
@@ -211,7 +189,6 @@ export class FleetFlowAnalytics extends Component {
     }
 
     async _loadEfficiencyChart() {
-        // Get per-vehicle fuel efficiency, build line-like data sorted by vehicle name
         const vehicles = await this.orm.searchRead(
             "ff.vehicle",
             [["active", "=", true], ["fuel_efficiency", ">", 0]],
@@ -226,11 +203,10 @@ export class FleetFlowAnalytics extends Component {
 
         this.state.efficiencyChartSVG = points.length >= 2
             ? markup(makeSVGLine(points, 420, 180, "#7c3aed", "#7c3aed"))
-            : "<p class='ff-chart-empty'>No fuel efficiency data yet.</p>";
+            : "No fuel efficiency data yet";
     }
 
     async _loadTopCostlyChart() {
-        // Top 5 vehicles by total operational cost
         const vehicles = await this.orm.searchRead(
             "ff.vehicle",
             [["active", "=", true], ["total_operational_cost", ">", 0]],
@@ -245,32 +221,28 @@ export class FleetFlowAnalytics extends Component {
 
         this.state.topCostlySVG = bars.length > 0
             ? markup(makeSVGBar(bars, 420, 180))
-            : "<p class='ff-chart-empty'>No expense data yet.</p>";
+            : "No expense data yet.";
     }
 
     async _loadMonthlySummary() {
-        // Get all completed trips grouped by month for revenue
         const trips = await this.orm.searchRead(
             "ff.trip",
             [["state", "=", "completed"]],
             ["scheduled_date", "revenue"]
         );
 
-        // Get fuel expenses grouped by month
         const expenses = await this.orm.searchRead(
             "ff.fuel.expense",
             [],
             ["date", "cost", "expense_type"]
         );
 
-        // Get maintenance by month
         const maint = await this.orm.searchRead(
             "ff.maintenance",
             [["state", "=", "done"]],
             ["service_date", "cost"]
         );
 
-        // Build month map
         const months = {};
 
         const getKey = (dateStr) => {
@@ -323,7 +295,6 @@ export class FleetFlowAnalytics extends Component {
     }
 
     async _loadDeadStock() {
-        // Vehicles with available state and 0 trips in last 30 days
         const since = new Date();
         since.setDate(since.getDate() - 30);
         const sinceStr = since.toISOString().split("T")[0];
@@ -335,7 +306,6 @@ export class FleetFlowAnalytics extends Component {
              "total_operational_cost", "total_revenue"]
         );
 
-        // Find which ones had recent trips
         const recentTrips = await this.orm.searchRead(
             "ff.trip",
             [["scheduled_date", ">=", sinceStr + " 00:00:00"],
@@ -358,7 +328,6 @@ export class FleetFlowAnalytics extends Component {
             }));
     }
 
-    // ── Event Handlers ──────────────────────────────────────────────────────
 
     async onRefresh() {
         await this._loadAll();
@@ -421,7 +390,6 @@ export class FleetFlowAnalytics extends Component {
         this.notification.add("Dead Stock report exported!", { type: "success" });
     }
 
-    // ── Formatters ──────────────────────────────────────────────────────────
 
     fmtCurrency(val) {
         if (!val && val !== 0) return "—";

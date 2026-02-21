@@ -4,7 +4,6 @@
 <t t-name="fleetflow.Dashboard">
     <div class="ff-dashboard">
 
-        <!-- ── Top Bar ─────────────────────────────────────────────── -->
         <div class="ff-topbar">
             <div class="ff-topbar-left">
                 <i class="fa fa-bars ff-menu-icon"/>
@@ -52,7 +51,6 @@
             </div>
         </div>
 
-        <!-- ── Page Title ──────────────────────────────────────────── -->
         <div class="ff-page-header">
             <div>
                 <h1 class="ff-page-title">Command Center</h1>
@@ -60,59 +58,7 @@
             </div>
         </div>
 
-        <!-- ── KPI Tiles ───────────────────────────────────────────── -->
-        <div class="ff-kpi-row">
-
-            <!-- Active Fleet -->
-            <div class="ff-kpi-card ff-kpi-blue" t-on-click="() => this.onKpiClick('active_fleet')">
-                <div class="ff-kpi-icon">
-                    <i class="fa fa-truck"/>
-                </div>
-                <div class="ff-kpi-body">
-                    <div class="ff-kpi-label">Active Fleet</div>
-                    <div class="ff-kpi-value" t-esc="state.activeFleet"/>
-                    <div class="ff-kpi-sub">vehicles on road</div>
-                </div>
-                <div class="ff-kpi-arrow"><i class="fa fa-chevron-right"/></div>
-            </div>
-
-            <!-- Maintenance Alerts -->
-            <div class="ff-kpi-card ff-kpi-orange" t-on-click="() => this.onKpiClick('maintenance')">
-                <div class="ff-kpi-icon">
-                    <i class="fa fa-wrench"/>
-                </div>
-                <div class="ff-kpi-body">
-                    <div class="ff-kpi-label">Maintenance Alert</div>
-                    <div class="ff-kpi-value" t-esc="state.maintenanceAlerts"/>
-                    <div class="ff-kpi-sub">vehicles in shop</div>
-                </div>
-                <div class="ff-kpi-arrow"><i class="fa fa-chevron-right"/></div>
-            </div>
-
-            <!-- Utilization Rate -->
-            <div class="ff-kpi-card ff-kpi-green">
-                <div class="ff-kpi-icon">
-                    <i class="fa fa-bar-chart"/>
-                </div>
-                <div class="ff-kpi-body">
-                    <div class="ff-kpi-label">Utilization Rate</div>
-                    <div class="ff-kpi-value">
-                        <t t-esc="state.utilizationRate"/>%
-                    </div>
-                    <div class="ff-kpi-sub">of fleet working</div>
-                </div>
-                <div class="ff-kpi-progress-wrap">
-                    <div class="ff-kpi-progress">
-                        <div class="ff-kpi-progress-bar"
-                             t-att-style="'width:' + state.utilizationRate + '%'"/>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pending Cargo -->
-            <div class="ff-kpi-card ff-kpi-purple" t-on-click="() => this.onKpiClick('pending_cargo')">
-                <div class="ff-kpi-icon">
-                    <i class="fa fa-archive"/>
+            <       <i class="fa fa-archive"/>
                 </div>
                 <div class="ff-kpi-body">
                     <div class="ff-kpi-label">Pending Cargo</div>
@@ -124,41 +70,13 @@
 
         </div>
 
-        <!-- ── Trip Table ──────────────────────────────────────────── -->
-        <div class="ff-table-card">
-            <div class="ff-table-header">
-                <h2 class="ff-table-title">
-                    <i class="fa fa-list-alt"/> Trip Overview
-                </h2>
-                <span class="ff-table-count">
-                    <t t-esc="state.trips.length"/> trips
-                </span>
-            </div>
-
-            <!-- Loading state -->
             <t t-if="state.loading">
-                <div class="ff-loading">
-                    <i class="fa fa-spinner fa-spin fa-2x"/>
                     <p>Loading dashboard data…</p>
                 </div>
             </t>
 
-            <!-- Empty state -->
-            <t t-elif="state.trips.length === 0">
-                <div class="ff-empty">
-                    <i class="fa fa-inbox fa-3x"/>
-                    <p>No trips found matching your filters.</p>
-                    <button class="ff-btn ff-btn-primary" t-on-click="onNewTrip">
-                        <i class="fa fa-plus"/> Create First Trip
-                    </button>
-                </div>
-            </t>
-
-            <!-- Data table -->
             <t t-else="">
-                <div class="ff-table-wrap">
                     <table class="ff-table">
-                        <thead>
                             <tr>
                                 <th class="ff-th-sortable" t-on-click="() => this.onSortColumn('name')">
                                     Trip # <t t-esc="getSortIcon('name')"/>

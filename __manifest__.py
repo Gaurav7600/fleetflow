@@ -22,12 +22,9 @@ Pages (matching wireframe blueprint):
     'author': 'FleetFlow',
     'depends': ['base', 'mail', 'web'],
     'data': [
-        # Security first
         'security/fleetflow_groups.xml',
         'security/ir.model.access.csv',
-        # Sequences
         'data/fleetflow_sequence.xml',
-        # Views – ordered by dependency
         'views/ff_vehicle_views.xml',
         'views/ff_driver_views.xml',
         'views/ff_maintenance_views.xml',

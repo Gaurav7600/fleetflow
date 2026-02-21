@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         PAGE 7: DRIVER PERFORMANCE & SAFETY PROFILES
-         Wireframe table: Name | License# | Expiry | Completion Rate |
-                          Safety Score | Complaints
-         Features: License expired → blocked from assignment
-                   Safety Score, Duty Status toggle
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- LIST VIEW — exact wireframe columns -->
     <record id="view_ff_driver_list" model="ir.ui.view">
         <field name="name">ff.driver.list</field>
         <field name="model">ff.driver</field>
@@ -19,14 +10,12 @@
                   decoration-warning="not license_expired and days_to_expiry >= 0 and days_to_expiry &lt;= 30"
                   decoration-success="state == 'available' and not license_expired"
                   sample="1">
-                <!-- Wireframe columns: Name | License# | Expiry | Completion Rate | Safety Score | Complaints -->
                 <field name="name" string="Name"/>
                 <field name="license_number" string="License#"/>
                 <field name="license_expiry" string="Expiry"/>
                 <field name="trip_completion_rate" string="Completion Rate (%)" widget="float" digits="[16,0]"/>
                 <field name="safety_score" string="Safety Score" widget="float" digits="[16,0]"/>
                 <field name="complaints" string="Complaints"/>
-                <!-- Extra useful columns -->
                 <field name="license_category" string="Category" optional="show"/>
                 <field name="days_to_expiry" string="Days Left" optional="show"/>
                 <field name="state" widget="badge" string="Duty Status"
@@ -34,7 +23,6 @@
                        decoration-info="state=='on_duty'"
                        decoration-muted="state=='off_duty'"
                        decoration-danger="state=='suspended'"/>
-                <!-- Quick action buttons -->
                 <button name="action_suspend" type="object"
                         string="Suspend" class="btn-sm btn-danger"
                         invisible="state == 'suspended'"
@@ -46,7 +34,6 @@
         </field>
     </record>
 
-    <!-- FORM VIEW — Driver Profile with compliance banners -->
     <record id="view_ff_driver_form" model="ir.ui.view">
         <field name="name">ff.driver.form</field>
         <field name="model">ff.driver</field>
@@ -70,7 +57,6 @@
                            statusbar_visible="available,on_duty,off_duty,suspended"/>
                 </header>
                 <sheet>
-                    <!-- The "Safety Lock" — license expired banner -->
                     <div class="alert alert-danger" role="alert"
                          invisible="not license_expired">
                         <strong><i class="fa fa-ban me-2"/>
@@ -79,13 +65,11 @@
                         This driver cannot be assigned to any trip until their license is renewed.
                         Days overdue: <field name="days_to_expiry" class="fw-bold" readonly="1"/>
                     </div>
-                    <!-- Expiring soon warning -->
                     <div class="alert alert-warning" role="alert"
                          invisible="license_expired or days_to_expiry &gt; 30 or days_to_expiry &lt; 0">
                         <strong><i class="fa fa-exclamation-triangle me-2"/>License Expiring Soon!</strong>
                         <field name="days_to_expiry" readonly="1"/> days remaining — renew before expiry to avoid dispatch block.
                     </div>
-                    <!-- Suspended banner -->
                     <div class="alert alert-danger" role="alert"
                          invisible="state != 'suspended'">
                         <strong><i class="fa fa-user-slash me-2"/>Driver Suspended</strong>
@@ -112,7 +96,6 @@
                         </group>
                     </group>
 
-                    <!-- Performance & Safety Scores — matching wireframe columns -->
                     <group string="Performance &amp; Safety" col="4">
                         <field name="safety_score" widget="progressbar"
                             options="{'editable': true, 'max_value': 100, 'title': 'Safety Score'}"/>
@@ -147,7 +130,6 @@
         </field>
     </record>
 
-    <!-- KANBAN VIEW — grouped by status -->
     <record id="view_ff_driver_kanban" model="ir.ui.view">
         <field name="name">ff.driver.kanban</field>
         <field name="model">ff.driver</field>
@@ -173,7 +155,6 @@
                                      'suspended':  'danger'
                                    }}"/>
                         </div>
-                        <!-- Expired license alert on card -->
                         <div t-if="record.license_expired.raw_value"
                              class="alert alert-danger py-1 px-2 mt-1 mb-1 small">
                             <i class="fa fa-ban me-1"/> License EXPIRED
@@ -190,7 +171,6 @@
         </field>
     </record>
 
-    <!-- SEARCH VIEW -->
     <record id="view_ff_driver_search" model="ir.ui.view">
         <field name="name">ff.driver.search</field>
         <field name="model">ff.driver</field>
@@ -214,7 +194,6 @@
         </field>
     </record>
 
-    <!-- ACTION -->
     <record id="action_ff_driver" model="ir.actions.act_window">
         <field name="name">Driver Performance &amp; Safety</field>
         <field name="res_model">ff.driver</field>

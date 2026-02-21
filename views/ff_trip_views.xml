@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         PAGE 4: TRIP DISPATCHER & MANAGEMENT
-         Wireframe:
-           Top table: Trip | Fleet Type | Origin | Destination | Status
-           Bottom form: New Trip Form (Select Vehicle, Cargo Weight,
-                        Select Driver, Origin, Destination,
-                        Estimated Fuel Cost, Confirm & Dispatch Trip)
-         Lifecycle: Draft → Dispatched → Completed → Cancelled
-         Rule: CargoWeight > MaxCapacity → BLOCKED
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- LIST VIEW — top table in wireframe -->
     <record id="view_ff_trip_list" model="ir.ui.view">
         <field name="name">ff.trip.list</field>
         <field name="model">ff.trip</field>
@@ -22,7 +10,6 @@
                   decoration-danger="state == 'cancelled'"
                   decoration-info="state == 'dispatched'"
                   sample="1">
-                <!-- Wireframe columns: Trip | Fleet Type | Origin | Destination | Status -->
                 <field name="name" string="Trip"/>
                 <field name="fleet_type" string="Fleet Type"/>
                 <field name="vehicle_id" string="Vehicle" optional="show"/>
@@ -37,7 +24,6 @@
                        decoration-info="state=='dispatched'"
                        decoration-success="state=='completed'"
                        decoration-danger="state=='cancelled'"/>
-                <!-- Lifecycle action buttons in list -->
                 <button name="action_dispatch" type="object"
                         string="Dispatch" class="btn-sm btn-primary"
                         invisible="state != 'draft'"
@@ -53,13 +39,11 @@
         </field>
     </record>
 
-    <!-- FORM VIEW — New Trip Form matching wireframe exactly -->
     <record id="view_ff_trip_form" model="ir.ui.view">
         <field name="name">ff.trip.form</field>
         <field name="model">ff.trip</field>
         <field name="arch" type="xml">
             <form string="Trip">
-                <!-- Lifecycle statusbar — Draft→Dispatched→Completed→Cancelled -->
                 <header>
                     <button name="action_dispatch" type="object"
                             string="Confirm &amp; Dispatch Trip" class="btn-primary"
@@ -75,12 +59,10 @@
                     <button name="action_reset_draft" type="object"
                             string="Reset to Draft" class="btn-secondary"
                             invisible="state != 'cancelled'"/>
-                    <!-- Lifecycle pill statusbar matching wireframe -->
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,dispatched,completed"/>
                 </header>
                 <sheet>
-                    <!-- CARGO OVERLOAD BANNER — wireframe: "Too heavy!" block -->
                     <div class="alert alert-danger" role="alert"
                          invisible="capacity_ok or not vehicle_id">
                         <strong>
@@ -95,16 +77,13 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
 
-                    <!-- New Trip Form — field names match wireframe labels exactly -->
                     <group string="New Trip Form">
                         <group>
-                            <!-- Select Vehicle (Available only) -->
                             <field name="vehicle_id"
                                    string="Select Vehicle"
                                    domain="[('state','=','available')]"
                                    readonly="state != 'draft'"
                                    options="{'no_create': True}"/>
-                            <!-- Cargo Weight — validation rule applied -->
                             <field name="cargo_weight"
                                    string="Cargo Weight (kg)"
                                    readonly="state != 'draft'"/>
@@ -114,7 +93,6 @@
                             <field name="capacity_ok" readonly="1" widget="boolean"/>
                         </group>
                         <group>
-                            <!-- Select Driver (Available + valid license only) -->
                             <field name="driver_id"
                                    string="Select Driver"
                                    domain="[('state','in',['available']),('license_expired','=',False)]"
@@ -125,7 +103,6 @@
                     </group>
                     <group>
                         <group string="Route">
-                            <!-- Origin Address / Destination — wireframe labels -->
                             <field name="origin"
                                    string="Origin Address"
                                    readonly="state != 'draft'"/>
@@ -137,7 +114,6 @@
                             <field name="scheduled_date"
                                    string="Scheduled Departure"
                                    readonly="state != 'draft'"/>
-                            <!-- Estimated Fuel Cost — wireframe field -->
                             <field name="estimated_fuel_cost"
                                    string="Estimated Fuel Cost"
                                    readonly="state != 'draft'"/>
@@ -145,7 +121,6 @@
                         </group>
                     </group>
 
-                    <!-- Actual timestamps (shown after dispatch) -->
                     <group invisible="state == 'draft'">
                         <group string="Actual Journey">
                             <field name="actual_departure" readonly="1"/>
@@ -167,7 +142,6 @@
         </field>
     </record>
 
-    <!-- KANBAN VIEW — Trip Board (grouped by state = lifecycle columns) -->
     <record id="view_ff_trip_kanban" model="ir.ui.view">
         <field name="name">ff.trip.kanban</field>
         <field name="model">ff.trip</field>
@@ -197,7 +171,6 @@
                                      'cancelled':  'danger'
                                    }}"/>
                         </div>
-                        <!-- Overload warning on card -->
                         <div t-if="!record.capacity_ok.raw_value and record.vehicle_id.raw_value"
                              class="alert alert-danger py-1 px-2 mt-1 mb-0 small">
                             ⚠ Over capacity!
@@ -209,7 +182,6 @@
                             <li>⚖ <field name="cargo_weight"/> / <field name="vehicle_capacity"/> kg</li>
                             <li>📅 <field name="scheduled_date" widget="date"/></li>
                         </ul>
-                        <!-- Action buttons on kanban card -->
                         <div class="o_kanban_record_bottom mt-2">
                             <button name="action_dispatch" type="object"
                                     string="Dispatch" class="btn-sm btn-primary"
@@ -224,7 +196,6 @@
         </field>
     </record>
 
-    <!-- SEARCH VIEW -->
     <record id="view_ff_trip_search" model="ir.ui.view">
         <field name="name">ff.trip.search</field>
         <field name="model">ff.trip</field>
@@ -255,7 +226,6 @@
         </field>
     </record>
 
-    <!-- ACTION — default to dispatched trips visible -->
     <record id="action_ff_trip" model="ir.actions.act_window">
         <field name="name">Trip Dispatcher &amp; Management</field>
         <field name="res_model">ff.trip</field>

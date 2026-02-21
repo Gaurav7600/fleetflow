@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         MENU STRUCTURE — matching wireframe sidebar exactly:
-           Dashboard
-           Vehicle Registry
-           Trip Dispatcher
-           Maintenance
-           Trip & Expense
-           Performance
-           Analytics
-    ══════════════════════════════════════════════════════════════ -->
-
-    <!-- ── Root App Menu ──────────────────────────────────────────── -->
     <menuitem
         id="menu_fleetflow_root"
         name="Fleet Flow"
         sequence="50"
         web_icon="fleetflow,static/description/icon2.png"/>
 
-    <!-- ── 1. Dashboard ───────────────────────────────────────────── -->
-    <!-- Wireframe: "Dashboard" top item in sidebar — OWL Command Center -->
     <menuitem
         id="menu_ff_dashboard"
         name="Dashboard"
@@ -28,8 +14,6 @@
         action="action_ff_dashboard_client"
         sequence="10"/>
 
-    <!-- ── 2. Vehicle Registry ────────────────────────────────────── -->
-    <!-- Wireframe: "Vehicle Registry" sidebar item -->
     <menuitem
         id="menu_ff_vehicle_registry"
         name="Vehicle Registry"
@@ -37,8 +21,6 @@
         action="action_ff_vehicle"
         sequence="20"/>
 
-    <!-- ── 3. Trip Dispatcher ─────────────────────────────────────── -->
-    <!-- Wireframe: "Trip Dispatcher" sidebar item -->
     <menuitem
         id="menu_ff_trip_dispatcher"
         name="Trip Dispatcher"
@@ -46,8 +28,6 @@
         action="action_ff_trip"
         sequence="30"/>
 
-    <!-- ── 4. Maintenance ─────────────────────────────────────────── -->
-    <!-- Wireframe: "Maintenance" sidebar item -->
     <menuitem
         id="menu_ff_maintenance"
         name="Maintenance"
@@ -55,8 +35,6 @@
         action="action_ff_maintenance"
         sequence="40"/>
 
-    <!-- ── 5. Trip & Expense ──────────────────────────────────────── -->
-    <!-- Wireframe: "Trip & Expense" sidebar item -->
     <menuitem
         id="menu_ff_trip_expense"
         name="Trip &amp; Expense"
@@ -64,8 +42,6 @@
         action="action_ff_fuel_expense"
         sequence="50"/>
 
-    <!-- ── 6. Performance (Driver Safety Profiles) ────────────────── -->
-    <!-- Wireframe: "Performance" sidebar item = Page 7 Driver Profiles -->
     <menuitem
         id="menu_ff_performance"
         name="Performance"
@@ -73,49 +49,11 @@
         action="action_ff_driver"
         sequence="60"/>
 
-    <!-- ── 7. Analytics ───────────────────────────────────────────── -->
-    <!-- OWL Analytics Dashboard -->
     <menuitem
         id="menu_ff_analytics"
         name="Analytics"
         parent="menu_fleetflow_root"
         action="action_ff_analytics_client"
         sequence="70"/>
-
-    <!-- Analytics sub-items -->
-    <!-- <menuitem
-        id="menu_ff_analytics_fleet"
-        name="Fleet ROI &amp; Efficiency"
-        parent="menu_ff_analytics"
-        action="action_ff_fleet_analytics"
-        sequence="10"/>
-
-    <menuitem
-        id="menu_ff_analytics_financial"
-        name="Financial Summary of Month"
-        parent="menu_ff_analytics"
-        action="action_ff_financial_summary"
-        sequence="20"/>
-
-    <menuitem
-        id="menu_ff_analytics_expense"
-        name="Fuel &amp; Expense Analytics"
-        parent="menu_ff_analytics"
-        action="action_ff_expense_analytics"
-        sequence="30"/>
-
-    <menuitem
-        id="menu_ff_analytics_top_vehicles"
-        name="Top Efficient Vehicles"
-        parent="menu_ff_analytics"
-        action="action_ff_top_efficient"
-        sequence="40"/> -->
-
-    <!-- ── Quick Access from Dashboard KPI tiles ─────────────────── -->
-    <!-- These aren't sidebar items but actions linked from dashboard -->
-    <!-- Active Fleet → on_trip vehicles -->
-    <!-- Maintenance Alert → in_shop vehicles -->
-    <!-- Pending Cargo → draft trips -->
-    <!-- License Alerts → expired drivers -->
 
 </odoo>
