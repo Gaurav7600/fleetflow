@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_fleetflow_root"
+        name="FleetFlow"
+        sequence="50"
+        web_icon="fleetflow,static/description/icon.png"/>
+
+    <!-- Command Center -->
+    <menuitem id="menu_fleetflow_dashboard"
+        name="Command Center"
+        parent="menu_fleetflow_root"
+        action="action_fleetflow_dashboard"
+        sequence="1"/>
+
+    <!-- Vehicles -->
+    <menuitem id="menu_fleetflow_vehicles"
+        name="Vehicles"
+        parent="menu_fleetflow_root"
+        sequence="10"/>
+
+    <menuitem id="menu_fleetflow_vehicle_registry"
+        name="Vehicle Registry"
+        parent="menu_fleetflow_vehicles"
+        action="action_fleetflow_vehicle"
+        sequence="1"/>
+
+    <menuitem id="menu_fleetflow_maintenance"
+        name="Maintenance &amp; Service"
+        parent="menu_fleetflow_vehicles"
+        action="action_fleetflow_maintenance"
+        sequence="2"/>
+
+    <!-- Dispatch -->
+    <menuitem id="menu_fleetflow_dispatch"
+        name="Dispatch"
+        parent="menu_fleetflow_root"
+        sequence="20"/>
+
+    <menuitem id="menu_fleetflow_trips"
+        name="Trip Dispatcher"
+        parent="menu_fleetflow_dispatch"
+        action="action_fleetflow_trip"
+        sequence="1"/>
+
+    <menuitem id="menu_fleetflow_fuel"
+        name="Fuel &amp; Expenses"
+        parent="menu_fleetflow_dispatch"
+        action="action_fleetflow_fuel"
+        sequence="2"/>
+
+    <!-- Drivers -->
+    <menuitem id="menu_fleetflow_hr"
+        name="Drivers"
+        parent="menu_fleetflow_root"
+        sequence="30"/>
+
+    <menuitem id="menu_fleetflow_drivers"
+        name="Driver Profiles"
+        parent="menu_fleetflow_hr"
+        action="action_fleetflow_driver"
+        sequence="1"/>
+
+    <!-- Analytics -->
+    <menuitem id="menu_fleetflow_analytics"
+        name="Analytics &amp; Reports"
+        parent="menu_fleetflow_root"
+        sequence="40"/>
+
+    <menuitem id="menu_fleetflow_fleet_analytics"
+        name="Fleet Analytics"
+        parent="menu_fleetflow_analytics"
+        action="action_fleetflow_analytics"
+        sequence="1"/>
+
+    <menuitem id="menu_fleetflow_trip_analytics"
+        name="Trip Reports"
+        parent="menu_fleetflow_analytics"
+        action="action_fleetflow_trip_analytics"
+        sequence="2"/>
+</odoo>

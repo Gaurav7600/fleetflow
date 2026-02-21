@@ -1,0 +1,29 @@
+/* FleetFlow Custom Styles */
+
+.o_fleetflow_badge_available {
+    background-color: #28a745 !important;
+    color: white;
+}
+
+.o_fleetflow_badge_on_trip {
+    background-color: #17a2b8 !important;
+    color: white;
+}
+
+.o_fleetflow_badge_in_shop {
+    background-color: #ffc107 !important;
+    color: #212529;
+}
+
+.o_fleetflow_badge_retired {
+    background-color: #6c757d !important;
+    color: white;
+}
+
+/* Dashboard KPI cards */
+.fleetflow_kpi_card {
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
