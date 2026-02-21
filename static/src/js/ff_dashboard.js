@@ -14,7 +14,12 @@ import { useService } from "@web/core/utils/hooks";
 
 export class FleetFlowDashboard extends Component {
     static template = "fleetflow.Dashboard";
-    static props = {};
+    static props = {
+        action: { type: Object, optional: true },
+        actionId: { type: [Number, Boolean], optional: true },
+        updateActionState: { type: Function, optional: true },
+        className: { type: String, optional: true },
+    };
 
     setup() {
         this.orm = useService("orm");

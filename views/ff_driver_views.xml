@@ -114,8 +114,10 @@
 
                     <!-- Performance & Safety Scores — matching wireframe columns -->
                     <group string="Performance &amp; Safety" col="4">
-                        <field name="safety_score" string="Safety Score (/ 100)"/>
-                        <field name="trip_completion_rate" string="Completion Rate (%)" readonly="1"/>
+                        <field name="safety_score" widget="progressbar"
+                            options="{'editable': true, 'max_value': 100, 'title': 'Safety Score'}"/>
+                        <field name="trip_completion_rate" widget="progressbar"
+                            options="{'editable': false, 'max_value': 100, 'title': 'Completion Rate'}"/>
                         <field name="total_trips" readonly="1"/>
                         <field name="completed_trips" readonly="1"/>
                     </group>
