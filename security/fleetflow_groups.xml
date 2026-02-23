@@ -4,6 +4,8 @@
         <record id="module_category_fleetflow" model="ir.module.category">
             <field name="name">FleetFlow</field>
             <field name="sequence">20</field>
+        </record>
+
         <record id="group_ff_manager" model="res.groups">
             <field name="name">Fleet Manager</field>
             <field name="category_id" ref="module_category_fleetflow"/>

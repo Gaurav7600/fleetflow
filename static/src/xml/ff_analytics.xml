@@ -1,142 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-<t t-name="fleetflow.Analytics">
-<div class="ffa-page">
-
-    <div class="ffa-page-header">
-        <div>
-            <h1 class="ffa-page-title">
-                <i class="fa fa-bar-chart-o ffa-title-icon"/> Operational Analytics &amp; Financial Reports
-            </h1>
-            <p class="ffa-page-subtitle">
-                The "big picture" — turn your fleet data into smart business decisions.
-            </p>
-        </div>
-    </div>
-
-        <div class="ffa-kpi-row">
-
-            <div class="ffa-kpi ffa-kpi-util">
-                <div class="ffa-kpi-top">
-                    <span class="ffa-kpi-label">Utilization Rate</span>
-                    <i class="fa fa-dashboard ffa-kpi-icon-sm"/>
-                </div>
-                <div class="ffa-kpi-value">
-                    <t t-esc="state.utilizationRate"/>%
-                </div>
-                <div class="ffa-util-bar">
-                    <div class="ffa-util-fill"
-                         t-att-style="'width:' + Math.min(state.utilizationRate, 100) + '%'"/>
-                </div>
-                <div class="ffa-kpi-foot">Vehicles currently on road</div>
-            </div>
-
-        <div class="ffa-tabs">
-            <button t-att-class="'ffa-tab' + (state.activeTab === 'overview' ? ' ffa-tab-active' : '')"
-                    t-on-click="() => setTab('overview')">
-                <i class="fa fa-area-chart"/> Overview &amp; Charts
-            </button>
-            <button t-att-class="'ffa-tab' + (state.activeTab === 'monthly' ? ' ffa-tab-active' : '')"
-                    t-on-click="() => setTab('monthly')">
-                <i class="fa fa-table"/> Financial Summary
-            </button>
-            <button t-att-class="'ffa-tab' + (state.activeTab === 'deadstock' ? ' ffa-tab-active' : '')"
-                    t-on-click="() => setTab('deadstock')">
-                <i class="fa fa-exclamation-triangle"/> Dead Stock Alerts
-                <t t-if="state.deadStockVehicles.length > 0">
-                    <span class="ffa-badge-count" t-esc="state.deadStockVehicles.length"/>
-                </t>
-            </button>
-        </div>
-
-                <div class="ffa-chart-card">
-                    <div class="ffa-chart-header">
-                        <div class="ffa-chart-title-wrap">
-                            <div class="ffa-chart-icon ffa-icon-purple">
-                                <i class="fa fa-line-chart"/>
-                            </div>
-                            <div>
-                                <div class="ffa-chart-title">Fuel Efficiency Trend</div>
-                                <div class="ffa-chart-sub">km/L per vehicle</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ffa-chart-body">
-                        <t t-if="state.efficiencyChartSVG">
-                            <t t-out="state.efficiencyChartSVG"/>
-                        </t>
-                        <t t-else="">
-                            <div class="ffa-chart-empty">
-                                <i class="fa fa-bar-chart fa-2x"/>
-                                <p>No fuel data available yet</p>
-                            </div>
-                        </t>
-                    </div>
-                    <div class="ffa-chart-footer">
-                        <span class="ffa-chart-hint">
-                            <i class="fa fa-info-circle"/> Higher km/L = better fuel efficiency
-                        </span>
-                    </div>
-                </div>
-
-            <div class="ffa-stat-strip">
-                <div class="ffa-stat-item">
-                    <div class="ffa-stat-label">Total Revenue</div>
-                    <div class="ffa-stat-val ffa-stat-green" t-esc="fmtCurrency(state.totalRevenue)"/>
-                </div>
-                <div class="ffa-stat-divider"/>
-                <div class="ffa-stat-item">
-                    <div class="ffa-stat-label">Total Fuel Cost</div>
-                    <div class="ffa-stat-val ffa-stat-red" t-esc="fmtCurrency(state.totalFuelCost)"/>
-                </div>
-                <div class="ffa-stat-divider"/>
-                <div class="ffa-stat-item">
-                    <div class="ffa-stat-label">Total Maintenance</div>
-                    <div class="ffa-stat-val ffa-stat-orange" t-esc="fmtCurrency(state.totalMaintenance)"/>
-                </div>
-                <div class="ffa-stat-divider"/>
-                <div class="ffa-stat-item">
-                    <div class="ffa-stat-label">Avg Fleet ROI</div>
-                    <div t-att-class="'ffa-stat-val ' + (state.fleetROI >= 0 ? 'ffa-stat-green' : 'ffa-stat-red')"
-                         t-esc="fmtROI(state.fleetROI)"/>
-                </div>
-                <div class="ffa-stat-divider"/>
-                <div class="ffa-stat-item">
-                    <div class="ffa-stat-label">Idle Vehicles</div>
-                    <div class="ffa-stat-val ffa-stat-orange" t-esc="state.deadStockVehicles.length"/>
+    <t t-name="fleetflow.Analytics">
+        <div class="ffa-page">
+            <div class="ffa-page-header">
+                <div>
+                    <h1 class="ffa-page-title">
+                        <i class="fa fa-bar-chart-o ffa-title-icon"/> Operational Analytics &amp; Financial Reports
+                    </h1>
+                    <p class="ffa-page-subtitle">
+                        The "big picture" — turn your fleet data into smart business decisions.
+                    </p>
                 </div>
             </div>
-        </t>
-
-        <t t-if="state.activeTab === 'deadstock'">
-            <div class="ffa-table-card">
-                <div class="ffa-table-header">
-                    <div class="ffa-table-title-wrap">
-                        <div class="ffa-chart-icon ffa-icon-red">
-                            <i class="fa fa-exclamation-triangle"/>
+                <div class="ffa-kpi-row">
+                    <div class="ffa-kpi ffa-kpi-util">
+                        <div class="ffa-kpi-top">
+                            <span class="ffa-kpi-label">Utilization Rate</span>
+                            <i class="fa fa-dashboard ffa-kpi-icon-sm"/>
                         </div>
-                        <div>
-                            <div class="ffa-chart-title">Dead Stock Alerts</div>
-                            <div class="ffa-chart-sub">
-                                Vehicles idle for 30+ days — review for reassignment or sale
-                            </div>
+                        <div class="ffa-kpi-value">
+                            <t t-esc="state.utilizationRate"/>%
                         </div>
+                        <div class="ffa-util-bar">
+                            <div class="ffa-util-fill"
+                                t-att-style="'width:' + Math.min(state.utilizationRate, 100) + '%'"/>
+                        </div>
+                        <div class="ffa-kpi-foot">Vehicles currently on road</div>
                     </div>
-                    <button class="ffa-btn ffa-btn-csv" t-on-click="exportDeadStockCSV">
-                        <i class="fa fa-file-excel-o"/> Export CSV
+
+                <div class="ffa-tabs">
+                    <button t-att-class="'ffa-tab' + (state.activeTab === 'overview' ? ' ffa-tab-active' : '')"
+                            t-on-click="() => setTab('overview')">
+                        <i class="fa fa-area-chart"/> Overview &amp; Charts
+                    </button>
+                    <button t-att-class="'ffa-tab' + (state.activeTab === 'monthly' ? ' ffa-tab-active' : '')"
+                            t-on-click="() => setTab('monthly')">
+                        <i class="fa fa-table"/> Financial Summary
+                    </button>
+                    <button t-att-class="'ffa-tab' + (state.activeTab === 'deadstock' ? ' ffa-tab-active' : '')"
+                            t-on-click="() => setTab('deadstock')">
+                        <i class="fa fa-exclamation-triangle"/> Dead Stock Alerts
+                        <t t-if="state.deadStockVehicles.length > 0">
+                            <span class="ffa-badge-count" t-esc="state.deadStockVehicles.length"/>
+                        </t>
                     </button>
                 </div>
 
-                <t t-if="state.deadStockVehicles.length === 0">
-                    <div class="ffa-empty-state ffa-empty-good">
-                        <i class="fa fa-check-circle fa-3x"/>
-                        <p>Great! No idle vehicles detected in the last 30 days.</p>
+                <t t-if="state.activeTab === 'overview'">
+                    <div class="ffa-chart-card">
+                            <div class="ffa-chart-header">
+                                <div class="ffa-chart-title-wrap">
+                                    <div class="ffa-chart-icon ffa-icon-purple">
+                                        <i class="fa fa-line-chart"/>
+                                    </div>
+                                    <div>
+                                        <div class="ffa-chart-title">Fuel Efficiency Trend</div>
+                                        <div class="ffa-chart-sub">km/L per vehicle</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ffa-chart-body">
+                                <t t-if="state.efficiencyChartSVG">
+                                    <t t-out="state.efficiencyChartSVG"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="ffa-chart-empty">
+                                        <i class="fa fa-bar-chart fa-2x"/>
+                                        <p>No fuel data available yet</p>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="ffa-chart-footer">
+                                <span class="ffa-chart-hint">
+                                    <i class="fa fa-info-circle"/> Higher km/L = better fuel efficiency
+                                </span>
+                            </div>
+                        </div>
+
+                    <div class="ffa-stat-strip">
+                        <div class="ffa-stat-item">
+                            <div class="ffa-stat-label">Total Revenue</div>
+                            <div class="ffa-stat-val ffa-stat-green" t-esc="fmtCurrency(state.totalRevenue)"/>
+                        </div>
+                        <div class="ffa-stat-divider"/>
+                        <div class="ffa-stat-item">
+                            <div class="ffa-stat-label">Total Fuel Cost</div>
+                            <div class="ffa-stat-val ffa-stat-red" t-esc="fmtCurrency(state.totalFuelCost)"/>
+                        </div>
+                        <div class="ffa-stat-divider"/>
+                        <div class="ffa-stat-item">
+                            <div class="ffa-stat-label">Total Maintenance</div>
+                            <div class="ffa-stat-val ffa-stat-orange" t-esc="fmtCurrency(state.totalMaintenance)"/>
+                        </div>
+                        <div class="ffa-stat-divider"/>
+                        <div class="ffa-stat-item">
+                            <div class="ffa-stat-label">Avg Fleet ROI</div>
+                            <div t-att-class="'ffa-stat-val ' + (state.fleetROI >= 0 ? 'ffa-stat-green' : 'ffa-stat-red')"
+                                t-esc="fmtROI(state.fleetROI)"/>
+                        </div>
+                        <div class="ffa-stat-divider"/>
+                        <div class="ffa-stat-item">
+                            <div class="ffa-stat-label">Idle Vehicles</div>
+                            <div class="ffa-stat-val ffa-stat-orange" t-esc="state.deadStockVehicles.length"/>
+                        </div>
                     </div>
                 </t>
 
-                <t t-else="">
-</div>
-</t>
+                <t t-if="state.activeTab === 'deadstock'">
+                    <div class="ffa-table-card">
+                        <div class="ffa-table-header">
+                            <div class="ffa-table-title-wrap">
+                                <div class="ffa-chart-icon ffa-icon-red">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                </div>
+                                <div>
+                                    <div class="ffa-chart-title">Dead Stock Alerts</div>
+                                    <div class="ffa-chart-sub">
+                                        Vehicles idle for 30+ days — review for reassignment or sale
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="ffa-btn ffa-btn-csv" t-on-click="exportDeadStockCSV">
+                                <i class="fa fa-file-excel-o"/> Export CSV
+                            </button>
+                        </div>
+
+                        <t t-if="state.deadStockVehicles.length === 0">
+                            <div class="ffa-empty-state ffa-empty-good">
+                                <i class="fa fa-check-circle fa-3x"/>
+                                <p>Great! No idle vehicles detected in the last 30 days.</p>
+                            </div>
+                        </t>
+
+                        <t t-else="">
+                            <p>Idle vehicles list will display here</p>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
 
 </templates>
