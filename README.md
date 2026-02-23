@@ -153,7 +153,7 @@ Permissions are managed via:
 1. **Clone the repository into your Odoo addons directory:**
    ```bash
    cd /path/to/odoo/addons
-   git clone https://github.com/yourusername/fleetflow.git
+   git clone https://github.com/Gaurav7600/fleetflow.git
    ```
 
 2. **Update Odoo app list:**
@@ -260,15 +260,6 @@ Configured in: `data/fleetflow_sequence.xml`
 | Dashboard not loading | Clear browser cache; check JS console for errors |
 | Missing menu items | Verify `ff_menu.xml` is properly loaded |
 
-## 📞 Support & Contribution
-
-- **Bug Reports:** Open an issue on GitHub
-- **Feature Requests:** Discussions or pull requests
-- **Documentation:** See [Developer Guide](./DEVELOPER.md) (if available)
-
-## 📄 License
-
-[Specify your license here, e.g., LGPL-3.0, MIT, etc.]
 
 ## 👨‍💻 Authors
 
